@@ -1,0 +1,20 @@
+{
+    "Sun": {
+        "Aries": {
+            "1": "A fiery soul shines within you, bold and pioneering, destined to lead with unwavering courage.",
+            "10": "Your brilliance illuminates a path to career success, driven by ambition and action."
+        },
+        "Leo": {
+            "5": "Creativity and charisma define you, a radiant performer in life’s grand theater."
+        }
+    },
+    "Moon": {
+        "Cancer": {
+            "4": "A nurturing heart finds peace at home, emotions deep as the ocean guiding your soul."
+        }
+    },
+    "Ascendant": {
+        "Aries": "You charge into life with fearless energy, a warrior spirit shaping your destiny.",
+        "Libra": "Harmony and beauty guide your path, a diplomat weaving balance in all you touch."
+    }
+}

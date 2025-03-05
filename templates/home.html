@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vedic Astro AI - Begin Your Cosmic Journey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="twinkling"></div>
+    <div class="clouds"></div>
+    
+    <div class="container home-container">
+        <div class="logo-container">
+            <div class="cosmic-symbol"></div>
+            <h1 class="main-title">Vedic Astro AI</h1>
+        </div>
+        <p class="subtitle">Unveil the Ancient Secrets of the Cosmos</p>
+        
+        {% if error %}
+        <div class="error-message">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            <span>{{ error }}</span>
+        </div>
+        {% endif %}
+        
+        <div class="form-card">
+            <form action="/calculate" method="post" class="astro-form">
+                <div class="form-heading">
+                    <h2>Birth Chart Analysis</h2>
+                    <p>Enter your birth details to reveal your cosmic blueprint</p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="date">Date of Birth</label>
+                    <input type="date" id="date" name="date" required>
+                    <div class="form-hint">The positions of celestial bodies on this day influence your life path</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="time">Time of Birth</label>
+                    <input type="time" id="time" name="time" required>
+                    <div class="form-hint">The exact time determines your Ascendant (Lagna) and house positions</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="location">Birth Location</label>
+                    <input type="text" id="location" name="location" placeholder="City, Country" required>
+                    <div class="form-hint">Your geographic coordinates affect planetary positions and houses</div>
+                </div>
+                
+                <button type="submit" class="cosmic-button">
+                    <span class="button-text">Reveal My Cosmic Blueprint</span>
+                    <span class="button-icon">✧</span>
+                </button>
+            </form>
+        </div>
+        
+        <div class="zodiac-wheel">
+            <div class="wheel-symbol aries">♈</div>
+            <div class="wheel-symbol taurus">♉</div>
+            <div class="wheel-symbol gemini">♊</div>
+            <div class="wheel-symbol cancer">♋</div>
+            <div class="wheel-symbol leo">♌</div>
+            <div class="wheel-symbol virgo">♍</div>
+            <div class="wheel-symbol libra">♎</div>
+            <div class="wheel-symbol scorpio">♏</div>
+            <div class="wheel-symbol sagittarius">♐</div>
+            <div class="wheel-symbol capricorn">♑</div>
+            <div class="wheel-symbol aquarius">♒</div>
+            <div class="wheel-symbol pisces">♓</div>
+        </div>
+        
+        <p class="disclaimer">For entertainment and spiritual guidance purposes. Enter accurate details for the most insightful cosmic readings.</p>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').value = today;
+            
+            // Set default time to now
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('time').value = `${hours}:${minutes}`;
+            
+            // Animate zodiac wheel
+            const zodiacSymbols = document.querySelectorAll('.wheel-symbol');
+            zodiacSymbols.forEach((symbol, index) => {
+                symbol.style.animationDelay = `${index * 0.2}s`;
+                symbol.classList.add('animate');
+            });
+        });
+    </script>
+</body>
+</html>

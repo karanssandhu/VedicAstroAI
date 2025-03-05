@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Vedic Astrological Chart | Vedic Astro AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="twinkling"></div>
+    <div class="clouds"></div>
+    
+    <div class="container chart-container">
+        <header class="chart-header">
+            <div class="chart-title-area">
+                <h1 class="chart-title">Your Cosmic Blueprint</h1>
+                <p class="birth-details">{{ chart.birth_details }}</p>
+            </div>
+            <div class="chart-actions">
+                <button id="printChart" class="action-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                    Print
+                </button>
+                <a href="/" class="action-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    New Chart
+                </a>
+            </div>
+        </header>
+        
+        <div class="chart-sections">
+            <div class="chart-section chart-visual-section">
+                <div class="chart-visual">
+                    <div class="chart-circle">
+                        <div class="ascendant-marker" style="transform: rotate({{ chart.asc_degree }}deg)">
+                            <span class="ascendant-symbol">↑</span>
+                        </div>
+                        {% for planet in chart.planets %}
+                        <div class="planet-marker" 
+                             data-planet="{{ planet.name }}" 
+                             style="transform: rotate({{ planet.degree + (SIGNS.index(planet.sign) * 30) }}deg)">
+                            <span class="sign-{{ planet.name }}">{{ PLANET_SYMBOLS[planet.name] }}</span>
+                        </div>
+                        {% endfor %}
+                        
+                        <!-- Zodiac Signs -->
+                        <!-- <div class="sign-aries">♈</div>
+                        <div class="sign-taurus">♉</div>
+                        <div class="sign-gemini">♊</div>
+                        <div class="sign-cancer">♋</div>
+                        <div class="sign-leo">♌</div>
+                        <div class="sign-virgo">♍</div>
+                        <div class="sign-libra">♎</div>
+                        <div class="sign-scorpio">♏</div>
+                        <div class="sign-sagittarius">♐</div>
+                        <div class="sign-capricorn">♑</div>
+                        <div class="sign-aquarius">♒</div>
+                        <div class="sign-pisces">♓</div> -->
+                    </div>
+                </div>
+                
+                <div class="ascendant-card">
+                    <h2>Ascendant (Lagna)</h2>
+                    <div class="ascendant-content">
+                        <div class="ascendant-sign">{{ chart.ascendant }}</div>
+                        <div class="ascendant-degree">{{ chart.asc_degree | round(2) }}°</div>
+                    </div>
+                    <p class="reasoning">{{ chart.asc_reasoning }}</p>
+                </div>
+            </div>
+
+            <!-- <div class="chart-section additional-vedic-charts"> -->
+                <h2 class="section-title">Additional Vedic Charts</h2>
+
+                <!-- Panchanga Table -->
+                <div class="vedic-chart-section">
+                    <h3>Panchanga Table</h3>
+                    <div class="chart-details">
+                        <!-- <pre>{{ chart.panchanga_table | tojson(indent=2) }}</pre> -->
+                        <canvas id="panchangaChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Bhinnashtakavarga Chart -->
+                <div class="vedic-chart-section">
+                    <h3>Bhinnashtakavarga Chart</h3>
+                    <div class="chart-details">
+                        <!-- <pre>{{ chart.bhinnashtakavarga | tojson(indent=2) }}</pre> -->
+                        <canvas id="bhinnashtakavargaChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Gulika Longitude -->
+                <div class="vedic-chart-section">
+                    <h3>Gulika Longitude</h3>
+                    <div class="chart-details">
+                        <!-- <pre>{{ chart.gulika_longitude | tojson(indent=2) }}</pre> -->
+                    </div>
+                </div>
+            </div>
+            
+            
+            <div class="chart-section">
+                <h2 class="section-title">Planetary Positions</h2>
+                <div class="planets-container">
+                    {% for planet in chart.planets %}
+                    <div class="planet-card" data-planet="{{ planet.name }}">
+                        <div class="planet-header">
+                            <h3 class="planet-name">{{ planet.name }}</h3>
+                            <div class="planet-position">
+                                <span class="planet-sign">{{ planet.sign }}</span>
+                                <span class="planet-degree">{{ planet.degree | round(2) }}°</span>
+                            </div>
+                        </div>
+                        <div class="planet-details">
+                            <div class="detail-item">
+                                <span class="detail-label">House:</span>
+                                <span class="detail-value">{{ planet.house }}</span>
+                            </div>
+                            <p class="planet-interpretation">{{ planet.interpretation }}</p>
+                            <button class="toggle-reasoning">Show Reasoning</button>
+                            <p class="reasoning hidden">{{ planet.reasoning }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="chart-section cosmic-query-section">
+                <h2 class="section-title">Ask the Cosmic Oracle</h2>
+                <div id="chat">
+                    <div id="messages">
+                        <div class="message system">
+                            <div class="message-content">
+                                <p>Welcome to your cosmic journey. Ask questions about your chart to receive insights.</p>
+                                <div class="suggested-questions">
+                                    <button class="question-suggestion">What is my sun sign?</button>
+                                    <button class="question-suggestion">What does my ascendant mean?</button>
+                                    <button class="question-suggestion">What can you tell me about my career?</button>
+                                    <button class="question-suggestion">How is my love life?</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" id="question" placeholder="Ask about your chart..." autofocus>
+                        <button id="sendQuestion" class="cosmic-button">
+                            <span class="button-icon">✧</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const chart = {{ chart | tojson }};
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle reasoning visibility
+            document.querySelectorAll('.toggle-reasoning').forEach(button => {
+                button.addEventListener('click', function() {
+                    const reasoning = this.nextElementSibling;
+                    reasoning.classList.toggle('hidden');
+                    this.textContent = reasoning.classList.contains('hidden') ? 'Show Reasoning' : 'Hide Reasoning';
+                });
+            });
+            
+            // Print chart functionality
+            document.getElementById('printChart').addEventListener('click', function() {
+                window.print();
+            });
+            
+            // Question suggestions
+            document.querySelectorAll('.question-suggestion').forEach(button => {
+                button.addEventListener('click', function() {
+                    document.getElementById('question').value = this.textContent;
+                    sendQuestion();
+                });
+            });
+            
+            // Send question on Enter key
+            document.getElementById('question').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    sendQuestion();
+                }
+            });
+            
+            // Send question button
+            document.getElementById('sendQuestion').addEventListener('click', sendQuestion);
+            
+            // Highlight planets on hover
+            document.querySelectorAll('.planet-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    const planetName = this.getAttribute('data-planet');
+                    document.querySelector(`.planet-marker[data-planet="${planetName}"]`).classList.add('highlight');
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    const planetName = this.getAttribute('data-planet');
+                    document.querySelector(`.planet-marker[data-planet="${planetName}"]`).classList.remove('highlight');
+                });
+            });
+        });
+        
+        function sendQuestion() {
+            const questionInput = document.getElementById('question');
+            const question = questionInput.value.trim();
+            
+            if (!question) return;
+            
+            // Add user message to chat
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML += `
+                <div class="message user">
+                    <div class="message-content">
+                        <p>${question}</p>
+                    </div>
+                </div>
+                <div class="message loading">
+                    <div class="message-content">
+                        <div class="loading-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Clear input
+            questionInput.value = '';
+            
+            // Scroll to bottom
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            
+            // Send query to backend
+            fetch('/query', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chart: chart,
+                    question: question
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Remove loading message
+                const loadingMessage = document.querySelector('.message.loading');
+                if (loadingMessage) {
+                    loadingMessage.remove();
+                }
+                
+                // Add response to chat
+                messagesDiv.innerHTML += `
+                    <div class="message system">
+                        <div class="message-content">
+                            <p>${data.response}</p>
+                            <button class="toggle-reasoning">Show Reasoning</button>
+                            <p class="reasoning hidden">${data.reasoning}</p>
+                        </div>
+                    </div>
+                `;
+                
+                // Add event listener to new toggle button
+                const newToggleButton = messagesDiv.querySelector('.message.system:last-child .toggle-reasoning');
+                newToggleButton.addEventListener('click', function() {
+                    const reasoning = this.nextElementSibling;
+                    reasoning.classList.toggle('hidden');
+                    this.textContent = reasoning.classList.contains('hidden') ? 'Show Reasoning' : 'Hide Reasoning';
+                });
+                
+                // Scroll to bottom
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            })
+            .catch(error => {
+                // Remove loading message
+                const loadingMessage = document.querySelector('.message.loading');
+                if (loadingMessage) {
+                    loadingMessage.remove();
+                }
+                
+                // Add error message
+                messagesDiv.innerHTML += `
+                    <div class="message system error">
+                        <div class="message-content">
+                            <p>Error: Could not get a response. Please try again.</p>
+                        </div>
+                    </div>
+                `;
+                
+                // Scroll to bottom
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>

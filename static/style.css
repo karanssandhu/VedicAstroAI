@@ -1,0 +1,960 @@
+/* Base Styles */
+:root {
+    --color-background: #0a061a;
+    --color-text: #e0e0ff;
+    --color-accent: #9d6cff;
+    --color-accent-light: #b288ff;
+    --color-accent-dark: #7a56d4;
+    --color-card: rgba(16, 10, 37, 0.8);
+    --color-card-hover: rgba(24, 16, 50, 0.9);
+    --color-error: #ff5a7a;
+    --gradient-primary: linear-gradient(135deg, #7a56d4 0%, #9867ff 50%, #d361ff 100%);
+    --font-primary: 'Montserrat', sans-serif;
+    --font-display: 'Cinzel', serif;
+    --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.2);
+    --shadow-glow: 0 0 15px rgba(157, 108, 255, 0.5);
+    --transition-standard: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-primary);
+    background-color: var(--color-background);
+    color: var(--color-text);
+    line-height: 1.6;
+    overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDQwIDQwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMTU3LCAxMDgsIDI1NSwgMC4xKSIgc3Ryb2tlLXdpZHRoPSIwLjUiPjxjaXJjbGUgY3g9IjIwIiBjeT0iMjAiIHI9IjAuNSIvPjwvZz48L3N2Zz4=');
+}
+
+/* Animated Background */
+.stars, .twinkling, .clouds {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+}
+
+.stars {
+    background: #000 url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9InRyYW5zcGFyZW50Ii8+PHJlY3QgeD0iOTkiIHk9Ijk5IiB3aWR0aD0iMiIgaGVpZ2h0PSIyIiBmaWxsPSJ3aGl0ZSIgb3BhY2l0eT0iMC43Ii8+PHJlY3QgeD0iNDkiIHk9IjE0OSIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0id2hpdGUiIG9wYWNpdHk9IjAuNSIvPjxyZWN0IHg9IjE3OSIgeT0iNDkiIHdpZHRoPSIzIiBoZWlnaHQ9IjMiIGZpbGw9IndoaXRlIiBvcGFjaXR5PSIwLjYiLz48cmVjdCB4PSIxNDkiIHk9IjE3OSIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0id2hpdGUiIG9wYWNpdHk9IjAuNCIvPjxyZWN0IHg9IjIwIiB5PSI3MCIgd2lkdGg9IjIiIGhlaWdodD0iMiIgZmlsbD0id2hpdGUiIG9wYWNpdHk9IjAuNSIvPjxyZWN0IHg9IjM1IiB5PSIxMDUiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IndoaXRlIiBvcGFjaXR5PSIwLjMiLz48cmVjdCB4PSIxNzAiIHk9IjExMCIgd2lkdGg9IjIiIGhlaWdodD0iMiIgZmlsbD0id2hpdGUiIG9wYWNpdHk9IjAuNiIvPjxyZWN0IHg9IjE1MCIgeT0iMzUiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IndoaXRlIiBvcGFjaXR5PSIwLjQiLz48cmVjdCB4PSI2NSIgeT0iMTAiIHdpZHRoPSIyIiBoZWlnaHQ9IjIiIGZpbGw9IndoaXRlIiBvcGFjaXR5PSIwLjUiLz48cmVjdCB4PSIxNjAiIHk9IjE3MCIgd2lkdGg9IjMiIGhlaWdodD0iMyIgZmlsbD0id2hpdGUiIG9wYWNpdHk9IjAuNyIvPjxyZWN0IHg9IjEwIiB5PSIxNjAiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IndoaXRlIiBvcGFjaXR5PSIwLjMiLz48cmVjdCB4PSIxMjAiIHk9IjE1IiB3aWR0aD0iMiIgaGVpZ2h0PSIyIiBmaWxsPSJ3aGl0ZSIgb3BhY2l0eT0iMC42Ii8+PHJlY3QgeD0iMTUiIHk9IjEyMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0id2hpdGUiIG9wYWNpdHk9IjAuNCIvPjwvc3ZnPg==') repeat top center;
+}
+
+.twinkling {
+    background: transparent url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9InRyYW5zcGFyZW50Ii8+PHJlY3QgeD0iOTkiIHk9Ijk5IiB3aWR0aD0iMiIgaGVpZ2h0PSIyIiBmaWxsPSJ3aGl0ZSIgb3BhY2l0eT0iMC43Ij48YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJvcGFjaXR5IiB2YWx1ZXM9IjAuNzsxOzAuNyIgZHVyPSI0cyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiLz48L3JlY3Q+PHJlY3QgeD0iNDkiIHk9IjE0OSIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0id2hpdGUiIG9wYWNpdHk9IjAuNSI+PGFuaW1hdGUgYXR0cmlidXRlTmFtZT0ib3BhY2l0eSIgdmFsdWVzPSIwLjU7MC44OzAuNSIgZHVyPSIzcyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiLz48L3JlY3Q+PHJlY3QgeD0iMTc5IiB5PSI0OSIgd2lkdGg9IjMiIGhlaWdodD0iMyIgZmlsbD0id2hpdGUiIG9wYWNpdHk9IjAuNiI+PGFuaW1hdGUgYXR0cmlidXRlTmFtZT0ib3BhY2l0eSIgdmFsdWVzPSIwLjY7MTswLjYiIGR1cj0iNXMiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIi8+PC9yZWN0Pjwvc3ZnPg==') repeat top center;
+    opacity: 0.6;
+    animation: move-twinkle 200s linear infinite;
+}
+
+.clouds {
+    background: transparent url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAwIiBoZWlnaHQ9IjEwMDAiIHZpZXdCb3g9IjAgMCAxMDAwIDEwMDAiPjxmaWx0ZXIgaWQ9ImJsdXIiPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjM1Ii8+PC9maWx0ZXI+PHBhdGggZD0iTTAgMGgxMDAwdjEwMDBIMHoiIGZpbGw9InRyYW5zcGFyZW50Ii8+PGcgZmlsbD0iIzU3NTc4QSIgb3BhY2l0eT0iMC4xIiBmaWx0ZXI9InVybCgjYmx1cikiPjxjaXJjbGUgY3g9IjUwMCIgY3k9IjUwMCIgcj0iMjAwIi8+PGNpcmNsZSBjeD0iNzUwIiBjeT0iNDAwIiByPSIxNTAiLz48Y2lyY2xlIGN4PSIyNTAiIGN5PSI2MDAiIHI9IjE3NSIvPjwvZz48L3N2Zz4=') repeat top center;
+    opacity: 0.3;
+    animation: move-clouds 150s linear infinite;
+}
+
+@keyframes move-twinkle {
+    from {background-position: 0 0;}
+    to {background-position: 10000px 0;}
+}
+
+@keyframes move-clouds {
+    from {background-position: 0 0;}
+    to {background-position: 10000px 0;}
+}
+
+/* Container Styles */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    border-radius: 1rem;
+    background-color: rgba(10, 6, 26, 0.7);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-soft);
+    position: relative;
+    z-index: 1;
+}
+
+.home-container {
+    max-width: 800px;
+    text-align: center;
+}
+
+.chart-container {
+    max-width: 1200px;
+}
+
+/* Typography */
+/* Typography (continued) */
+h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: var(--shadow-glow);
+}
+
+h1 {
+    font-size: 3rem;
+    letter-spacing: 1px;
+}
+
+h2 {
+    font-size: 2.2rem;
+    letter-spacing: 0.8px;
+}
+
+h3 {
+    font-size: 1.8rem;
+    letter-spacing: 0.6px;
+}
+
+h4 {
+    font-size: 1.4rem;
+    letter-spacing: 0.4px;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    opacity: 0.8;
+    margin-bottom: 2rem;
+}
+
+p {
+    margin-bottom: 1rem;
+}
+
+.main-title {
+    font-size: 3.5rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 2px;
+    position: relative;
+    display: inline-block;
+}
+
+.main-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 25%;
+    width: 50%;
+    height: 1px;
+    background: var(--gradient-primary);
+}
+
+.section-title {
+    position: relative;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 2px;
+    background: var(--gradient-primary);
+}
+
+/* Logo and Cosmic Symbols */
+.logo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.cosmic-symbol {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+    position: relative;
+    background: var(--color-background);
+    border: 2px solid var(--color-accent);
+    box-shadow: var(--shadow-glow);
+}
+
+.cosmic-symbol::before,
+.cosmic-symbol::after {
+    content: '';
+    position: absolute;
+    background: var(--color-accent);
+}
+
+.cosmic-symbol::before {
+    width: 60px;
+    height: 2px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.cosmic-symbol::after {
+    width: 2px;
+    height: 60px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.cosmic-symbol::before,
+.cosmic-symbol::after {
+    animation: pulse 3s infinite alternate;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 5px rgba(157, 108, 255, 0.5);
+    }
+    100% {
+        box-shadow: 0 0 20px rgba(157, 108, 255, 0.8);
+    }
+}
+
+/* Zodiac Wheel */
+.zodiac-wheel {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    border: 1px solid var(--color-accent-light);
+    margin: 3rem auto;
+    position: relative;
+    animation: rotate 60s linear infinite;
+    box-shadow: var(--shadow-glow), inset 0 0 20px rgba(157, 108, 255, 0.3);
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.wheel-symbol {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.5s ease;
+}
+
+.wheel-symbol.animate {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.aries { top: 0; left: 50%; transform: translate(-50%, -50%); }
+.taurus { top: 7%; right: 25%; }
+.gemini { top: 25%; right: 7%; }
+.cancer { top: 50%; right: 0; transform: translate(50%, -50%); }
+.leo { bottom: 25%; right: 7%; }
+.virgo { bottom: 7%; right: 25%; }
+.libra { bottom: 0; left: 50%; transform: translate(-50%, 50%); }
+.scorpio { bottom: 7%; left: 25%; }
+.sagittarius { bottom: 25%; left: 7%; }
+.capricorn { top: 50%; left: 0; transform: translate(-50%, -50%); }
+.aquarius { top: 25%; left: 7%; }
+.pisces { top: 7%; left: 25%; }
+
+/* Form Styles */
+.form-card {
+    background-color: var(--color-card);
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: var(--shadow-soft);
+    margin-bottom: 2rem;
+    border: 1px solid rgba(157, 108, 255, 0.2);
+    transition: var(--transition-standard);
+}
+
+.form-card:hover {
+    background-color: var(--color-card-hover);
+    border-color: rgba(157, 108, 255, 0.4);
+    box-shadow: var(--shadow-glow);
+}
+
+.form-heading {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.astro-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.form-hint {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    font-style: italic;
+}
+
+input {
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-accent-dark);
+    background-color: rgba(10, 6, 26, 0.6);
+    color: var(--color-text);
+    font-family: var(--font-primary);
+    transition: var(--transition-standard);
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px rgba(157, 108, 255, 0.3);
+}
+
+/* Buttons */
+.cosmic-button {
+    background: var(--gradient-primary);
+    border: none;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    box-shadow: var(--shadow-soft);
+    transition: var(--transition-standard);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.cosmic-button:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-glow), 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.cosmic-button:active {
+    transform: translateY(-1px);
+}
+
+.cosmic-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: 0.5s;
+}
+
+.cosmic-button:hover::before {
+    left: 100%;
+}
+
+.button-icon {
+    font-size: 1.2rem;
+}
+
+.action-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: rgba(157, 108, 255, 0.2);
+    border: 1px solid var(--color-accent-dark);
+    color: var(--color-text);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: var(--transition-standard);
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.action-button:hover {
+    background-color: rgba(157, 108, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Chart Page Styles */
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.chart-title-area {
+    flex: 1;
+}
+
+.chart-title {
+    margin-bottom: 0.25rem;
+}
+
+.birth-details {
+    font-style: italic;
+    opacity: 0.8;
+}
+
+.chart-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.chart-sections {
+    display: grid;
+    gap: 2rem;
+}
+
+.chart-section {
+    background-color: var(--color-card);
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid rgba(157, 108, 255, 0.2);
+    transition: var(--transition-standard);
+}
+
+.chart-section:hover {
+    background-color: var(--color-card-hover);
+    border-color: rgba(157, 108, 255, 0.4);
+    box-shadow: var(--shadow-glow);
+}
+
+/* Chart Visual */
+.chart-visual-section {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 768px) {
+    .chart-visual-section {
+        grid-template-columns: 2fr 1fr;
+    }
+}
+
+.chart-visual {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chart-circle {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    border: 2px solid var(--color-accent);
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: var(--shadow-glow), inset 0 0 20px rgba(157, 108, 255, 0.3);
+}
+
+.ascendant-marker {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 2px;
+    height: 20px;
+    background-color: var(--color-accent-light);
+    transform-origin: bottom center;
+    z-index: 2;
+}
+
+.ascendant-symbol {
+    position: absolute;
+    top: -25px;
+    left: -10px;
+    font-size: 1.5rem;
+    color: var(--color-accent-light);
+}
+
+.planet-marker {
+    /* position: absolute;
+    top: 0;
+    left: 50%;
+    width: 3px;
+    height: 10px;
+    background-color: white;
+    transform-origin: bottom center;
+    z-index: 1;
+    transition: var(--transition-standard); */
+
+    position: absolute;
+    width: 2px; /* Thin line for the marker */
+    height: 150px; /* Half the circle’s diameter to reach the edge */
+    background-color: white;
+    transform-origin: center bottom; /* Rotate from the bottom center */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    margin-top: -150px; /* Offset by the height to start from the center */
+    margin-left: -1px; /* Center the 2px width */
+    z-index: 1;
+    transition: var(--transition-standard);
+}
+
+.planet-marker.highlight {
+    background-color: var(--color-accent-light);
+    box-shadow: 0 0 10px var(--color-accent);
+}
+
+.planet-symbol {
+    position: absolute;
+    top: -25px;
+    left: -8px;
+    font-size: 1.2rem;
+}
+
+/* Sign positions in chart circle */
+[class^="sign-"] {
+    position: absolute;
+    font-size: 1.3rem;
+    opacity: 0.7;
+}
+
+.sign-Aries { top: 10px; left: 50%; transform: translateZ(-50%); }
+.sign-Taurus { top: 50px; right: 80px; }
+.sign-Gemini { top: 120px; right: 30px; }
+.sign-Cancer { right: 10px; top: 50%; transform: translateZ(-50%); }
+.sign-Leo { bottom: 120px; right: 30px; }
+.sign-Virgo { bottom: 50px; right: 80px; }
+.sign-Libra { bottom: 10px; left: 50%; transform: translateZ(-50%); }
+.sign-Scorpio { bottom: 50px; left: 80px; }
+.sign-Sagittarius { bottom: 120px; left: 30px; }
+.sign-Capricorn { left: 10px; top: 50%; transform: translateZ(-50%); }
+.sign-Aquarius { top: 120px; left: 30px; }
+.sign-Pisces { top: 50px; left: 80px; }
+
+/* Ascendant Card */
+.ascendant-card {
+    background-color: rgba(157, 108, 255, 0.1);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    border: 1px solid var(--color-accent-dark);
+}
+
+.ascendant-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.ascendant-sign {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.ascendant-degree {
+    font-size: 1.2rem;
+    opacity: 0.8;
+}
+
+/* Planets Container */
+.planets-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.planet-card {
+    background-color: rgba(10, 6, 26, 0.5);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    border: 1px solid rgba(157, 108, 255, 0.3);
+    transition: var(--transition-standard);
+}
+
+.planet-card:hover {
+    background-color: rgba(16, 10, 37, 0.7);
+    border-color: var(--color-accent);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-glow);
+}
+
+.planet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(157, 108, 255, 0.2);
+}
+
+.planet-name {
+    margin-bottom: 0;
+    font-size: 1.3rem;
+}
+
+.planet-position {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.planet-sign {
+    font-weight: 600;
+}
+
+.planet-degree {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.planet-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+}
+
+.detail-label {
+    font-weight: 600;
+}
+
+.planet-interpretation {
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.toggle-reasoning {
+    align-self: flex-start;
+    background: none;
+    border: none;
+    color: var(--color-accent-light);
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0;
+    text-decoration: underline;
+    transition: var(--transition-standard);
+}
+
+.toggle-reasoning:hover {
+    color: var(--color-accent);
+}
+
+.reasoning {
+    font-size: 0.85rem;
+    font-style: italic;
+    opacity: 0.8;
+    padding: 0.75rem;
+    background-color: rgba(10, 6, 26, 0.3);
+    border-radius: 0.25rem;
+    border-left: 2px solid var(--color-accent);
+}
+
+.hidden {
+    display: none;
+}
+
+/* Chat/Oracle Section */
+.cosmic-query-section {
+    margin-top: 2rem;
+}
+
+#chat {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    height: 400px;
+}
+
+#messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    background-color: rgba(10, 6, 26, 0.4);
+    border-radius: 0.5rem;
+    border: 1px solid rgba(157, 108, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.message {
+    max-width: 80%;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.message.user {
+    align-self: flex-end;
+    background-color: rgba(157, 108, 255, 0.2);
+    border: 1px solid var(--color-accent-dark);
+}
+
+.message.system {
+    align-self: flex-start;
+    background-color: rgba(16, 10, 37, 0.7);
+    border: 1px solid rgba(157, 108, 255, 0.3);
+}
+
+.message.error {
+    border-color: var(--color-error);
+    background-color: rgba(255, 90, 122, 0.1);
+}
+
+.message-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.suggested-questions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.question-suggestion {
+    background-color: rgba(157, 108, 255, 0.1);
+    border: 1px solid var(--color-accent-dark);
+    padding: 0.5rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: var(--transition-standard);
+}
+
+.question-suggestion:hover {
+    background-color: rgba(157, 108, 255, 0.3);
+}
+
+.chat-input {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.chat-input input {
+    flex: 1;
+}
+
+.chat-input .cosmic-button {
+    padding: 0.75rem;
+    aspect-ratio: 1;
+}
+
+/* Loading animation */
+.loading-dots {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+}
+
+.loading-dots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--color-accent);
+    animation: bounce 1.5s infinite ease-in-out;
+}
+
+.loading-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.loading-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+    0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+    40% { transform: scale(1); opacity: 1; }
+}
+
+/* Error Message */
+.error-message {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background-color: rgba(255, 90, 122, 0.1);
+    border: 1px solid var(--color-error);
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--color-error);
+}
+
+/* Disclaimer */
+.disclaimer {
+    margin-top: 2rem;
+    font-size: 0.85rem;
+    opacity: 0.6;
+    text-align: center;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .container {
+        padding: 1.5rem;
+    }
+
+    h1 {
+        font-size: 2.2rem;
+    }
+
+    h2 {
+        font-size: 1.8rem;
+    }
+
+    .chart-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .chart-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .chart-circle {
+        width: 250px;
+        height: 250px;
+    }
+
+    .zodiac-wheel {
+        width: 250px;
+        height: 250px;
+    }
+
+    .planets-container {
+        grid-template-columns: 1fr;
+    }
+
+    .message {
+        max-width: 90%;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .stars, .twinkling, .clouds {
+        display: none;
+    }
+
+    body {
+        background: white;
+        color: black;
+    }
+
+    .container {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+
+    .cosmic-query-section,
+    .chart-actions,
+    .toggle-reasoning {
+        display: none;
+    }
+
+    h1, h2, h3, h4 {
+        color: #333;
+        text-shadow: none;
+    }
+
+    /* .chart-circle {
+        border: 2px solid #333;
+        box-shadow: none;
+    } */
+
+    .chart-circle {
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        border: 2px solid var(--color-accent);
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: var(--shadow-glow), inset 0 0 20px rgba(157, 108, 255, 0.3);
+    }
+
+    .planet-card,
+    .chart-section {
+        border: 1px solid #ccc;
+        background-color: #f8f8f8;
+    }
+
+    .reasoning.hidden {
+        display: block;
+    }
+}
+
+/* Additional Vedic Charts Section */
+.additional-vedic-charts {
+    background-color: rgba(16, 10, 37, 0.5);
+}
+
+.vedic-chart-section {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: rgba(10, 6, 26, 0.3);
+    border-radius: 0.5rem;
+    border: 1px solid rgba(157, 108, 255, 0.2);
+}
+
+.vedic-chart-section h3 {
+    margin-bottom: 1rem;
+    color: var(--color-accent-light);
+}
+
+.chart-details pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    color: var(--color-text);
+    opacity: 0.8;
+    max-height: 300px;
+    overflow-y: auto;
+}
