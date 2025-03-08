@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="welcome-container">
+    <h1 class="welcome-title">Jyotish</h1>
+    <p class="welcome-subtitle">Vedic Astrology for Modern Times</p>
+    
+    <div class="welcome-actions">
+        <a href="{{ url_for('login') }}" class="btn">Login</a>
+        <a href="{{ url_for('signup') }}" class="btn btn-outline">Sign Up</a>
+    </div>
+</div>
+{% endblock %}

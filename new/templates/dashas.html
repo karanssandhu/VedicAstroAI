@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2 class="card-title">Vimshottari Dasha System</h2>
+    
+    <div class="current-dasha">
+        <div class="dasha-period">
+            <div>
+                <div class="dasha-planet">{{ dasha_data.current_mahadasha.planet }} Mahadasha</div>
+                <div class="dasha-dates">{{ dasha_data.current_mahadasha.start_date }} - {{ dasha_data.current_mahadasha.end_date }}</div>
+            </div>
+        </div>
+        
+        <div class="dasha-description">
+            {{ dasha_data.current_mahadasha.description }}
+        </div>
+    </div>
+    
+    <div class="current-dasha">
+        <div class="dasha-period">
+            <div>
+                <div class="dasha-planet">{{ dasha_data.current_antardasha.planet }} Antardasha</div>
+                <div class="dasha-dates">{{ dasha_data.current_antardasha.start_date }} - {{ dasha_data.current_antardasha.end_date }}</div>
+            </div>
+        </div>
+        
+        <div class="dasha-description">
+            {{ dasha_data.current_antardasha.description }}
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2 class="card-title">Upcoming Antardashas</h2>
+    
+    <div class="antardasha-list">
+        {% for dasha in dasha_data.upcoming_antardashas %}
+        <div class="antardasha-item">
+            <div>
+                <div class="antardasha-planet">{{ dasha.planet }} Antardasha</div>
+                <div class="antardasha-dates">{{ dasha.start_date }} - {{ dasha.end_date }}</div>
+            </div>
+            <div class="antardasha-duration">{{ dasha.duration }}</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="card">
+    <h2 class="card-title">Past Mahadashas</h2>
+    
+    <div class="antardasha-list">
+        {% for dasha in dasha_data.past_maharashas %}
+        <div class="antardasha-item">
+            <div>
+                <div class="antardasha-planet">{{ dasha.planet }} Mahadasha</div>
+                <div class="antardasha-dates">{{ dasha.start_date }} - {{ dasha.end_date }}</div>
+            </div>
+            <div class="antardasha-duration">{{ dasha.duration }}</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

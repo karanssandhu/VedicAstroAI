@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compatibility Analysis | Vedic Astro AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background: #000000;
+            --text: #ffffff;
+            --accent: #5555ff;
+            --card: #111111;
+            --gradient-start: #5555ff;
+            --gradient-end: #ff55ff;
+            --high: #88ff88;
+            --medium: #ffff88;
+            --low: #ff8888;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+            letter-spacing: -0.02em;
+        }
+        .subtitle {
+            color: #aaaaaa;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        .card {
+            background-color: var(--card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .section-title {
+            font-size: 1.2rem;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            letter-spacing: -0.01em;
+        }
+        .profile-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+        .profile {
+            text-align: center;
+            width: 45%;
+        }
+        .profile-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+        .profile-name {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+        .profile-details {
+            font-size: 0.85rem;
+            color: #aaaaaa;
+        }
+        .compatibility-score {
+            text-align: center;
+            width: 10%;
+            position: relative;
+        }
+        .score-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            margin: 0 auto 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        .score-label {
+            font-size: 0.8rem;
+            color: #aaaaaa;
+        }
+        .aspect-row {
+            display: flex;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #222222;
+        }
+        .aspect-row:last-child {
+            border-bottom: none;
+        }
+        .aspect-planets {
+            width: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        .aspect-info {
+            flex: 1;
+        }
+        .aspect-title {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+        .aspect-description {
+            font-size: 0.85rem;
+            color: #dddddd;
+        }
+        .aspect-nature {
+            width: 60px;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .nature-favorable {
+            color: var(--high);
+        }
+        .nature-mixed {
+            color: var(--medium);
+        }
+        .nature-challenging {
+            color: var(--low);
+        }
+        .compatibility-category {
+            margin-bottom: 1.5rem;
+        }
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .category-title {
+            font-weight: 600;
+        }
+        .category-score {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .category-bar {
+            height: 4px;
+            background-color: #333333;
+            border-radius: 2px;
+            margin-bottom: 0.5rem;
+        }
+        .category-fill {
+            height: 100%;
+            border-radius: 2px;
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+        }
+        .category-description {
+            font-size: 0.9rem;
+            color: #dddddd;
+        }
+        .form-container {
+            margin-top: 2rem;
+        }
+        .form-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            background-color: #222222;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        .form-button {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: var(--text);
+            border: none;
+            border-radius: 8px;
+            padding: 0.8rem 1.5rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+        }
+        .back-button {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .nav-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 1rem 0;
+            background-color: #111111;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            border-top: 1px solid #222222;
+        }
+        .nav-item {
+            color: #aaaaaa;
+            text-decoration: none;
+            font-size: 0.8rem;
+            text-align: center;
+            width: 25%;
+        }
+        .nav-item.active {
+            color: var(--accent);
+        }
+        .nav-icon {
+            font-size: 1.2rem;
+            margin-bottom: 0.2rem;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" style="padding-bottom: 5rem;">
+        <a href="/chart" class="back-button">← Back to Chart</a>
+
+        <header>
+            <h1>Compatibility Analysis</h1>
+            <div class="subtitle">Synastry & Relationship Insights</div>
+        </header>
+
+        {% if partner_data %}
+        <div class="profile-container">
+            <div class="profile">
+                <div class="profile-img">{{ user_name[0] }}</div>
+                <div class="profile-name">{{ user_name }}</div>
+                <div class="profile-details">{{ user_details }}</div>
+            </div>
+
+            <div class="compatibility-score">
+                <div class="score-circle">{{ overall_score }}</div>
+                <div class="score-label">Match</div>
+            </div>
+
+            <div class="profile">
+                <div class="profile-img">{{ partner_name[0] }}</div>
+                <div class="profile-name">{{ partner_name }}</div>
+                <div class="profile-details">{{ partner_details }}</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">Overall Compatibility</h2>
+            <p>{{ overall_description }}</p>
+
+            <div class="compatibility-category">
+                <div class="category-header">
+                    <div class="category-title">Emotional Compatibility</div>
+                    <div class="category-score">{{ emotional_score }}/10</div>
+                </div>
+                <div class="category-bar">
+                    <div class="category-fill" style="width: {{ emotional_score * 10 }}%;"></div>
+                </div>
+                <div class="category-description">{{ emotional_description }}</div>
+            </div>
+
+            <div class="compatibility-category">
+                <div class="category-header">
+                    <div class="category-title">Communication</div>
+                    <div class="category-score">{{ communication_score }}/10</div>
+                </div>
+                <div class="category-bar">
+                    <div class="category-fill" style="width: {{ communication_score * 10 }}%;"></div>
+                </div>
+                <div class="category-description">{{ communication_description }}</div>
+            </div>
+
+            <div class="compatibility-category">
+                <div class="category-header">
+                    <div class="category-title">Physical Attraction</div>
+                    <div class="category-score">{{ physical_score }}/10</div>
+                </div>
+                <div class="category-bar">
+                    <div class="category-fill" style="width: {{ physical_score * 10 }}%;"></div>
+                </div>
+                <div class="category-description">{{ physical_description }}</div>
+            </div>
+
+            <div class="compatibility-category">
+                <div class="category-header">
+                    <div class="category-title">Long-term Potential</div>
+                    <div class="category-score">{{ longterm_score }}/10</div>
+                </div>
+                <div class="category-bar">
+                    <div class="category-fill" style="width: {{ longterm_score * 10 }}%;"></div>
+                </div>
+                <div class="category-description">{{ longterm_description }}</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">Key Aspects</h2>
+
+            {% for aspect in key_aspects %}
+            <div class="aspect-row">
+                <div class="aspect-planets">
+                    <span class="planet-symbol">{{ PLANET_SYMBOLS[aspect.planet1] }}</span>
+                    <span style="margin: 0 3px;">{{ aspect.aspect_symbol }}</span>
+                    <span class="planet-symbol">{{ PLANET_SYMBOLS[aspect.planet2] }}</span>
+                </div>
+                <div class="aspect-info">
+                    <div class="aspect-title">{{ aspect.title }}</div>
+                    <div class="aspect-description">{{ aspect.description }}</div>
+                </div>
+                <div class="aspect-nature {{ aspect.nature_class }}">
+                    {{ aspect.nature }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">Relationship Guidance</h2>
+            <p>{{ guidance }}</p>
+        </div>
+
+        {% else %}
+        <div class="card">
+            <h2 class="section-title">Enter Partner Details</h2>
+            <div class="form-container">
+                <form action="/compatibility" method="post">
+                    <div class="form-group">
+                        <label class="form-label" for="partner-name">Partner's Name</label>
+                        <input class="form-input" type="text" id="partner-name" name="partner_name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="date1">Partner's Date of Birth</label>
+                        <input class="form-input" type="date" id="date1" name="date1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="time1">Partner's Time of Birth</label>
+                        <input class="form-input" type="time" id="time1" name="time1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="location1">Partner's Place of Birth</label>
+                        <input class="form-input" type="text" id="location1" name="location1" placeholder="City, Country" required>
+                    </div>
+
+                    <button type="submit" class="form-button">Analyze Compatibility</button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="nav-bar">
+        <a href="/chart" class="nav-item">
+            <span class="nav-icon">📊</span>
+            Chart
+        </a>
+        <a href="/planetary-strength" class="nav-item">
+            <span class="nav-icon">⚡</span>
+            Strength
+        </a>
+        <a href="/daily" class="nav-item">
+            <span class="nav-icon">📅</span>
+            Daily
+        </a>
+        <a href="/query" class="nav-item">
+            <span class="nav-icon">💬</span>
+            Ask
+        </a>
+    </div>
+</body>
+</html>

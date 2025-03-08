@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Jyotish - Vedic Astrology{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="container">
+        {% if 'user_id' in session %}
+        <nav class="navbar">
+            <div class="nav-item {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                <a href="{{ url_for('dashboard') }}">Today</a>
+            </div>
+            <div class="nav-item {% if request.endpoint == 'birth_chart' %}active{% endif %}">
+                <a href="{{ url_for('birth_chart') }}">Chart</a>
+            </div>
+            <div class="nav-item {% if request.endpoint == 'compatibility' %}active{% endif %}">
+                <a href="{{ url_for('compatibility') }}">Compatibility</a>
+            </div>
+            <div class="nav-item {% if request.endpoint == 'dashas' %}active{% endif %}">
+                <a href="{{ url_for('dashas') }}">Dashas</a>
+            </div>
+            <div class="nav-item {% if request.endpoint == 'transits' %}active{% endif %}">
+                <a href="{{ url_for('transits') }}">Transits</a>
+            </div>
+            <div class="nav-item {% if request.endpoint == 'remedies' %}active{% endif %}">
+                <a href="{{ url_for('remedies') }}">Remedies</a>
+            </div>
+        </nav>
+        {% endif %}
+        
+        <div class="content">
+            {% block content %}{% endblock %}
+        </div>
+        
+        {% if 'user_id' in session %}
+        <div class="footer">
+            <a href="{{ url_for('settings') }}" class="settings-link">Settings</a>
+            <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+        </div>
+        {% endif %}
+    </div>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="user-info">
+    <div class="user-signs">
+        <div class="user-sign">
+            <div class="sign-name">Ascendant</div>
+            <div class="sign-value">{{ user_data.ascendant }}</div>
+        </div>
+        <div class="user-sign">
+            <div class="sign-name">Moon Sign</div>
+            <div class="sign-value">{{ user_data.moon_sign }}</div>
+        </div>
+        <div class="user-sign">
+            <div class="sign-name">Sun Sign</div>
+            <div class="sign-value">{{ user_data.sun_sign }}</div>
+        </div>
+    </div>
+    
+    <div class="dasha-info">
+        <div class="dasha-label">Current Dasha</div>
+        <div class="dasha-value">{{ user_data.dashas.current }}</div>
+        <div class="dasha-label">Remaining</div>
+        <div class="dasha-value">{{ user_data.dashas.remaining }}</div>
+    </div>
+</div>
+
+<div class="card">
+    <h2 class="card-title">Planetary Positions</h2>
+    <div class="planet-list">
+        {% for planet in user_data.planets %}
+        <div class="planet-item">
+            <div class="planet-name">{{ planet.name }}</div>
+            <div class="planet-position">{{ planet.sign }} ({{ planet.house }}H)</div>
+            <div class="planet-position">{{ planet.degrees }}°</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="card daily-update">
+    <h2 class="card-title">Daily Update</h2>
+    <div class="update-date">{{ user_data.daily_update.date }}</div>
+    
+    <div class="transit-list">
+        {% for transit in user_data.daily_update.transits %}
+        <div class="transit-item">{{ transit }}</div>
+        {% endfor %}
+    </div>
+    
+    <div class="forecast">
+        {{ user_data.daily_update.forecast }}
+    </div>
+</div>
+{% endblock %}

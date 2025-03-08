@@ -1,0 +1,72 @@
+:root {
+  --bg-color: #1a1a1a;
+  --text-color: #ffffff;
+  --accent-color: #8A4AF3;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+h1 {
+  color: var(--accent-color);
+}
+
+h2 {
+  margin-top: 20px;
+}
+
+form {
+  margin: 20px 0;
+}
+
+input, button {
+  padding: 10px;
+  margin: 5px;
+  border: 1px solid var(--accent-color);
+  background: transparent;
+  color: var(--text-color);
+  border-radius: 5px;
+}
+
+button {
+  background-color: var(--accent-color);
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #6a3ab2;
+}
+
+#chart-container {
+  width: 320px;
+  height: 320px;
+  position: relative;
+  margin: 20px auto;
+  background: url('/static/chart-bg.png') no-repeat center;
+  background-size: contain;
+}
+
+.planet-icon {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+}
+
+#insights, #daily-insights, #compat-result {
+  margin-top: 20px;
+  text-align: left;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}

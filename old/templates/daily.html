@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Cosmic Insights | Astrology App</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Background Elements -->
+    <div class="stars"></div>
+    <div class="twinkling"></div>
+    <div class="clouds"></div>
+
+    <div class="container chart-container">
+        <div class="chart-header">
+            <div class="chart-title-area">
+                <h1 class="chart-title">Daily Cosmic Insights</h1>
+                <p class="birth-details">{{ current_date }}</p>
+            </div>
+            <div class="chart-actions">
+                <a href="{{ url_for('home') }}" class="action-button">
+                    <span class="button-icon">⟵</span> Back to Home
+                </a>
+                <a href="{{ url_for('birth_chart') }}" class="action-button">
+                    <span class="button-icon">📊</span> View Birth Chart
+                </a>
+                <button onclick="window.print()" class="action-button">
+                    <span class="button-icon">🖨️</span> Print
+                </button>
+            </div>
+        </div>
+
+        <!-- Daily Message Section -->
+        <section class="chart-section">
+            <h2 class="section-title">Daily Horoscope</h2>
+            <div class="daily-message">
+                {{ daily_message | safe }}
+            </div>
+        </section>
+
+        <!-- Transit Planets Section -->
+        <section class="chart-section">
+            <h2 class="section-title">Current Planetary Transits</h2>
+            <div class="planets-container">
+                {% for planet in transit_planets %}
+                <div class="planet-card" data-planet="{{ planet.name }}">
+                    <div class="planet-header">
+                        <h3 class="planet-name">
+                            {% if planet.name in PLANET_SYMBOLS %}
+                            <span class="planet-symbol">{{ PLANET_SYMBOLS[planet.name] }}</span>
+                            {% endif %}
+                            {{ planet.name }}
+                        </h3>
+                        <div class="planet-position">
+                            <span class="planet-sign">{{ planet.sign }}</span>
+                            <span class="planet-degree">{{ planet.degree|round(2) }}°</span>
+                        </div>
+                    </div>
+                    <div class="planet-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Natal Position:</span>
+                            <span>{{ planet.natal_sign }}</span>
+                        </div>
+                        
+                        {% if planet.aspects %}
+                        <div class="detail-item">
+                            <span class="detail-label">Current Aspects:</span>
+                            <span></span>
+                        </div>
+                        <ul class="aspects-list">
+                            {% for aspect in planet.aspects %}
+                            <li>
+                                {{ aspect.aspect_type|title }} to natal {{ aspect.planet }} 
+                                <span class="aspect-degree">({{ aspect.angle }}°)</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        
+                        <div class="planet-interpretation">
+                            {{ planet.interpretation | safe }}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Cosmic Oracle Section -->
+        <section class="chart-section cosmic-query-section">
+            <h2 class="section-title">Cosmic Oracle</h2>
+            <p class="subtitle">Ask the cosmos about how today's transits might affect you</p>
+            
+            <div id="chat">
+                <div id="messages">
+                    <div class="message system">
+                        <div class="message-content">
+                            <p>Welcome to the Cosmic Oracle. Ask me how today's planetary positions might be influencing your life, or try one of these questions:</p>
+                            <div class="suggested-questions">
+                                <div class="question-suggestion">How will today's Moon transit affect me?</div>
+                                <div class="question-suggestion">What area of life should I focus on today?</div>
+                                <div class="question-suggestion">What challenges might I face with current Mars transit?</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="user-question" placeholder="Ask the cosmos...">
+                    <button id="send-question" class="cosmic-button">
+                        <span class="button-icon">✨</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+        
+        <div class="disclaimer">
+            <p>This information is provided for entertainment purposes only. Cosmic alignments offer perspectives, but you create your own destiny.</p>
+        </div>
+    </div>
+
+    <script>
+        // Animation for zodiac signs
+        document.addEventListener('DOMContentLoaded', function() {
+            const wheelSymbols = document.querySelectorAll('.wheel-symbol');
+            wheelSymbols.forEach((symbol, index) => {
+                setTimeout(() => {
+                    symbol.classList.add('animate');
+                }, index * 200);
+            });
+
+            // Handle question suggestions
+            const suggestions = document.querySelectorAll('.question-suggestion');
+            suggestions.forEach(suggestion => {
+                suggestion.addEventListener('click', function() {
+                    document.getElementById('user-question').value = this.textContent;
+                });
+            });
+
+            // Handle sending questions
+            document.getElementById('send-question').addEventListener('click', sendQuestion);
+            document.getElementById('user-question').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendQuestion();
+                }
+            });
+
+            function sendQuestion() {
+                const questionInput = document.getElementById('user-question');
+                const question = questionInput.value.trim();
+                
+                if (!question) return;
+                
+                const messagesContainer = document.getElementById('messages');
+                
+                // Add user message
+                const userMessage = document.createElement('div');
+                userMessage.className = 'message user';
+                userMessage.innerHTML = `<div class="message-content"><p>${question}</p></div>`;
+                messagesContainer.appendChild(userMessage);
+                
+                // Add loading indicator
+                const loadingMessage = document.createElement('div');
+                loadingMessage.className = 'message system';
+                loadingMessage.innerHTML = `
+                    <div class="message-content">
+                        <div class="loading-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                `;
+                messagesContainer.appendChild(loadingMessage);
+                
+                // Scroll to bottom
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                
+                // Clear input
+                questionInput.value = '';
+                
+                // Simulate API response (replace with actual API call)
+                setTimeout(() => {
+                    // Remove loading indicator
+                    messagesContainer.removeChild(loadingMessage);
+                    
+                    // Generate a cosmic response based on the transit data
+                    let response = generateCosmicResponse(question);
+                    
+                    // Add oracle response
+                    const oracleMessage = document.createElement('div');
+                    oracleMessage.className = 'message system';
+                    oracleMessage.innerHTML = `<div class="message-content"><p>${response}</p></div>`;
+                    messagesContainer.appendChild(oracleMessage);
+                    
+                    // Scroll to bottom
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                }, 1500);
+            }
+            
+            function generateCosmicResponse(question) {
+                // This is a simplified example - in a real app, this would use the transit data
+                // to generate meaningful responses
+                
+                const responses = [
+                    "The current position of Jupiter suggests growth opportunities in your creative pursuits. Consider starting that project you've been thinking about.",
+                    "With the Moon transiting through your natal house, emotions may be heightened today. Take time for self-reflection and inner work.",
+                    "Mars is forming a challenging aspect today. Channel this energy constructively through physical activity rather than allowing frustration to build.",
+                    "Venus is favorably positioned, making this an excellent day for social connections and harmonious relationships. Reach out to someone you care about.",
+                    "Mercury's current transit indicates a time for clear thinking and communication. Important conversations will go well if approached mindfully.",
+                    "The Sun's position illuminates your path forward. Trust your intuition about next steps in your personal journey.",
+                    "Saturn's influence brings a reminder to establish healthy boundaries. What commitments truly deserve your energy?",
+                    "The cosmos suggests a need for balance between your inner and outer worlds today. Both reflection and action have their place."
+                ];
+                
+                // Simple logic to try to match question keywords
+                let responseIndex = Math.floor(Math.random() * responses.length);
+                
+                if (question.toLowerCase().includes("moon")) {
+                    responseIndex = 1;
+                } else if (question.toLowerCase().includes("mars") || question.toLowerCase().includes("challenge")) {
+                    responseIndex = 2;
+                } else if (question.toLowerCase().includes("love") || question.toLowerCase().includes("relationship")) {
+                    responseIndex = 3;
+                }
+                
+                return responses[responseIndex];
+            }
+        });
+    </script>
+</body>
+</html>

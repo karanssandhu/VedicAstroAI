@@ -1,0 +1,316 @@
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Dasha Periods | Vedic Astro AI</title>
+                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+                <style>
+                    :root {
+                        --background: #000000;
+                        --text: #ffffff;
+                        --accent: #5555ff;
+                        --card: #111111;
+                        --sun: #ff8833;
+                        --moon: #dddddd;
+                        --mars: #ff4444;
+                        --mercury: #33dd33;
+                        --jupiter: #ffcc33;
+                        --venus: #ff66ff;
+                        --saturn: #6666bb;
+                        --rahu: #aaaaaa;
+                        --ketu: #886666;
+                    }
+                    body {
+                        font-family: 'Inter', sans-serif;
+                        background-color: var(--background);
+                        color: var(--text);
+                        margin: 0;
+                        padding: 0;
+                        line-height: 1.6;
+                    }
+                    .container {
+                        max-width: 800px;
+                        margin: 0 auto;
+                        padding: 2rem 1rem;
+                    }
+                    header {
+                        text-align: center;
+                        margin-bottom: 2rem;
+                    }
+                    h1 {
+                        font-size: 1.8rem;
+                        font-weight: 600;
+                        margin: 0;
+                        letter-spacing: -0.02em;
+                    }
+                    .subtitle {
+                        color: #aaaaaa;
+                        font-size: 0.9rem;
+                        margin-top: 0.5rem;
+                    }
+                    .card {
+                        background-color: var(--card);
+                        border-radius: 12px;
+                        padding: 1.5rem;
+                        margin-bottom: 1.5rem;
+                    }
+                    .section-title {
+                        font-size: 1.2rem;
+                        margin-top: 0;
+                        margin-bottom: 1rem;
+                        letter-spacing: -0.01em;
+                    }
+                    .dasha-timeline {
+                        position: relative;
+                        padding-left: 20px;
+                        margin-bottom: 2rem;
+                    }
+                    .timeline-line {
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        bottom: 0;
+                        width: 2px;
+                        background-color: #333333;
+                    }
+                    .dasha-period {
+                        position: relative;
+                        margin-bottom: 1.5rem;
+                        padding-left: 1rem;
+                    }
+                    .dasha-period:last-child {
+                        margin-bottom: 0;
+                    }
+                    .period-dot {
+                        position: absolute;
+                        left: -20px;
+                        top: 5px;
+                        width: 10px;
+                        height: 10px;
+                        border-radius: 50%;
+                        background-color: var(--accent);
+                    }
+                    .current-period .period-dot {
+                        width: 14px;
+                        height: 14px;
+                        left: -22px;
+                        top: 3px;
+                        box-shadow: 0 0 0 4px rgba(85, 85, 255, 0.2);
+                    }
+                    .period-dates {
+                        font-size: 0.9rem;
+                        color: #aaaaaa;
+                        margin-bottom: 0.3rem;
+                    }
+                    .period-title {
+                        font-weight: 600;
+                        margin-bottom: 0.5rem;
+                        display: flex;
+                        align-items: center;
+                    }
+                    .planet-color {
+                        display: inline-block;
+                        width: 12px;
+                        height: 12px;
+                        border-radius: 50%;
+                        margin-right: 8px;
+                    }
+                    .planet-symbol {
+                        font-size: 1.2rem;
+                        margin-right: 6px;
+                    }
+                    .period-description {
+                        font-size: 0.9rem;
+                        margin-top: 0.5rem;
+                    }
+                    .sub-periods {
+                        margin-top: 1rem;
+                    }
+                    .sub-period-row {
+                        display: flex;
+                        padding: 0.5rem 0;
+                        border-bottom: 1px solid #222222;
+                        font-size: 0.9rem;
+                    }
+                    .sub-period-row:last-child {
+                        border-bottom: none;
+                    }
+                    .sub-period-dates {
+                        width: 120px;
+                        color: #aaaaaa;
+                        flex-shrink: 0;
+                    }
+                    .sub-period-planet {
+                        width: 80px;
+                        display: flex;
+                        align-items: center;
+                    }
+                    .sub-period-info {
+                        flex: 1;
+                    }
+                    .tab-container {
+                        display: flex;
+                        margin-bottom: 1.5rem;
+                    }
+                    .tab {
+                        flex: 1;
+                        text-align: center;
+                        padding: 0.8rem 0.5rem;
+                        background-color: #222222;
+                        font-size: 0.9rem;
+                        cursor: pointer;
+                    }
+                    .tab.active {
+                        background-color: var(--accent);
+                        font-weight: 600;
+                    }
+                    .tab:first-child {
+                        border-top-left-radius: 8px;
+                        border-bottom-left-radius: 8px;
+                    }
+                    .tab:last-child {
+                        border-top-right-radius: 8px;
+                        border-bottom-right-radius: 8px;
+                    }
+                    .back-button {
+                        display: inline-block;
+                        margin-bottom: 1rem;
+                        color: var(--accent);
+                        text-decoration: none;
+                        font-size: 0.9rem;
+                    }
+                    .nav-bar {
+                        display: flex;
+                        justify-content: space-around;
+                        padding: 1rem 0;
+                        background-color: #111111;
+                        position: fixed;
+                        bottom: 0;
+                        width: 100%;
+                        border-top: 1px solid #222222;
+                    }
+                    .nav-item {
+                        color: #aaaaaa;
+                        text-decoration: none;
+                        font-size: 0.8rem;
+                        text-align: center;
+                        width: 25%;
+                    }
+                    .nav-item.active {
+                        color: var(--accent);
+                    }
+                    .nav-icon {
+                        font-size: 1.2rem;
+                        margin-bottom: 0.2rem;
+                        display: block;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container" style="padding-bottom: 5rem;">
+                    <a href="/chart" class="back-button">← Back to Chart</a>
+
+                    <header>
+                        <h1>Dasha Periods</h1>
+                        <div class="subtitle">{{ birth_details }}</div>
+                    </header>
+
+                    <div class="tab-container">
+                        <div class="tab active" onclick="switchTab('vimshottari')">Vimshottari</div>
+                        <div class="tab" onclick="switchTab('yogini')">Yogini</div>
+                        <div class="tab" onclick="switchTab('chara')">Chara</div>
+                    </div>
+
+                    <div class="card">
+                        <h2 class="section-title">Current Period</h2>
+                        <div class="dasha-period current-period">
+                            <div class="period-dot"></div>
+                            <div class="period-dates">{{ current_mahadasha.start_date }} - {{ current_mahadasha.end_date }}</div>
+                            <div class="period-title">
+                                <span class="planet-symbol">{{ PLANET_SYMBOLS[current_mahadasha.planet] }}</span>
+                                {{ current_mahadasha.planet }} Mahadasha
+                            </div>
+                            <div class="period-description">{{ current_mahadasha.description }}</div>
+
+                            <div class="sub-periods">
+                                <h3 class="section-title" style="font-size: 1rem;">Current Antardasha</h3>
+                                <div class="sub-period-row">
+                                    <div class="sub-period-dates">{{ current_antardasha.start_date }} - {{ current_antardasha.end_date }}</div>
+                                    <div class="sub-period-planet">
+                                        <span class="planet-symbol">{{ PLANET_SYMBOLS[current_antardasha.planet] }}</span>
+                                        {{ current_antardasha.planet }}
+                                    </div>
+                                    <div class="sub-period-info">{{ current_antardasha.description }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2 class="section-title">Dasha Timeline</h2>
+                        <div class="dasha-timeline">
+                            <div class="timeline-line"></div>
+
+                            {% for dasha in all_dashas %}
+                            <div class="dasha-period {% if dasha.is_current %}current-period{% endif %}">
+                                <div class="period-dot" style="background-color: var(--{{ dasha.planet|lower }});"></div>
+                                <div class="period-dates">{{ dasha.start_date }} - {{ dasha.end_date }}</div>
+                                <div class="period-title">
+                                    <span class="planet-symbol">{{ PLANET_SYMBOLS[dasha.planet] }}</span>
+                                    {{ dasha.planet }} Mahadasha
+                                </div>
+                                <div class="period-description">{{ dasha.description }}</div>
+
+                                {% if dasha.is_current or dasha.is_expanded %}
+                                <div class="sub-periods">
+                                    <h3 class="section-title" style="font-size: 1rem;">Antardashas</h3>
+                                    {% for antardasha in dasha.antardashas %}
+                                    <div class="sub-period-row {% if antardasha.is_current %}current-period{% endif %}">
+                                        <div class="sub-period-dates">{{ antardasha.start_date }} - {{ antardasha.end_date }}</div>
+                                        <div class="sub-period-planet">
+                                            <span class="planet-symbol">{{ PLANET_SYMBOLS[antardasha.planet] }}</span>
+                                            {{ antardasha.planet }}
+                                        </div>
+                                        <div class="sub-period-info">{{ antardasha.description }}</div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nav-bar">
+                    <a href="/chart" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        Chart
+                    </a>
+                    <a href="/planetary-strength" class="nav-item">
+                        <span class="nav-icon">⚡</span>
+                        Strength
+                    </a>
+                    <a href="/daily" class="nav-item">
+                        <span class="nav-icon">📅</span>
+                        Daily
+                    </a>
+                    <a href="/query" class="nav-item">
+                        <span class="nav-icon">💬</span>
+                        Ask
+                    </a>
+                </div>
+
+                <script>
+                    function switchTab(dashaType) {
+                        const tabs = document.querySelectorAll('.tab');
+                        tabs.forEach(tab => tab.classList.remove('active'));
+                        event.currentTarget.classList.add('active');
+
+                        // In a real app, this would load the selected dasha type
+                        window.location.href = '/dashas?type=' + dashaType;
+                    }
+                </script>
+            </body>
+            </html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planetary Strength | Vedic Astro AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background: #000000;
+            --text: #ffffff;
+            --accent: #5555ff;
+            --card: #111111;
+            --strong: #ddffdd;
+            --medium: #ffffdd;
+            --weak: #ffdddd;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+            letter-spacing: -0.02em;
+        }
+        .subtitle {
+            color: #aaaaaa;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        .card {
+            background-color: var(--card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .section-title {
+            font-size: 1.2rem;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            letter-spacing: -0.01em;
+        }
+        .planet-row {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #222222;
+        }
+        .planet-row:last-child {
+            border-bottom: none;
+        }
+        .planet-symbol {
+            font-size: 1.5rem;
+            width: 40px;
+            text-align: center;
+        }
+        .planet-info {
+            flex: 1;
+        }
+        .planet-name {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+        .planet-details {
+            font-size: 0.85rem;
+            color: #bbbbbb;
+        }
+        .strength-bar {
+            height: 4px;
+            width: 100%;
+            background-color: #333333;
+            border-radius: 2px;
+            margin-top: 0.5rem;
+        }
+        .strength-fill {
+            height: 100%;
+            border-radius: 2px;
+        }
+        .very-strong {
+            background-color: var(--strong);
+        }
+        .strong {
+            background-color: #aaffaa;
+        }
+        .average {
+            background-color: var(--medium);
+        }
+        .weak {
+            background-color: var(--weak);
+        }
+        .prominent-card {
+            background: linear-gradient(to bottom right, #222222, #111111);
+        }
+        .planet-explanation {
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            color: #dddddd;
+        }
+        .nav-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 1rem 0;
+            background-color: #111111;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            border-top: 1px solid #222222;
+        }
+        .nav-item {
+            color: #aaaaaa;
+            text-decoration: none;
+            font-size: 0.8rem;
+            text-align: center;
+            width: 25%;
+        }
+        .nav-item.active {
+            color: var(--accent);
+        }
+        .nav-icon {
+            font-size: 1.2rem;
+            margin-bottom: 0.2rem;
+            display: block;
+        }
+        .back-button {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" style="padding-bottom: 5rem;">
+        <a href="/chart" class="back-button">← Back to Chart</a>
+
+        <header>
+            <h1>Planetary Strength</h1>
+            <div class="subtitle">{{ birth_details }}</div>
+        </header>
+
+        <div class="card prominent-card">
+            <h2 class="section-title">Overall Influences</h2>
+            <p>{{ overall_interpretation }}</p>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">Strongest Planet</h2>
+            <div class="planet-row">
+                <div class="planet-symbol">{{ PLANET_SYMBOLS[strongest_planet.planet] }}</div>
+                <div class="planet-info">
+                    <div class="planet-name">{{ strongest_planet.planet }}</div>
+                    <div class="planet-details">{{ strongest_planet.strength_category }} • {{ strongest_planet.sign }} • House {{ strongest_planet.house }}</div>
+                    <div class="strength-bar">
+                        <div class="strength-fill very-strong" style="width: {{ (strongest_planet.strength / 500) * 100 }}%;"></div>
+                    </div>
+                    <div class="planet-explanation">{{ strongest_planet.interpretation }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">Weakest Planet</h2>
+            <div class="planet-row">
+                <div class="planet-symbol">{{ PLANET_SYMBOLS[weakest_planet.planet] }}</div>
+                <div class="planet-info">
+                    <div class="planet-name">{{ weakest_planet.planet }}</div>
+                    <div class="planet-details">{{ weakest_planet.strength_category }} • {{ weakest_planet.sign }} • House {{ weakest_planet.house }}</div>
+                    <div class="strength-bar">
+                        <div class="strength-fill weak" style="width: {{ (weakest_planet.strength / 500) * 100 }}%;"></div>
+                    </div>
+                    <div class="planet-explanation">{{ weakest_planet.interpretation }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">All Planets</h2>
+            {% for planet in planet_strengths %}
+            <div class="planet-row">
+                <div class="planet-symbol">{{ PLANET_SYMBOLS[planet.planet] }}</div>
+                <div class="planet-info">
+                    <div class="planet-name">{{ planet.planet }}</div>
+                    <div class="planet-details">
+                        {{ planet.strength_category }} • {{ planet.sign }} • House {{ planet.house }}
+                        {% if planet.is_retrograde %} • Retrograde{% endif %}
+                        {% if planet.dignity != "Normal" %} • {{ planet.dignity }}{% endif %}
+                    </div>
+                    <div class="strength-bar">
+                        <div class="strength-fill {{ planet.strength_category|lower|replace(' ', '-') }}" style="width: {{ (planet.strength / 500) * 100 }}%;"></div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="nav-bar">
+        <a href="/chart" class="nav-item">
+            <span class="nav-icon">📊</span>
+            Chart
+        </a>
+        <a href="/planetary-strength" class="nav-item active">
+            <span class="nav-icon">⚡</span>
+            Strength
+        </a>
+        <a href="/daily" class="nav-item">
+            <span class="nav-icon">📅</span>
+            Daily
+        </a>
+        <a href="/query" class="nav-item">
+            <span class="nav-icon">💬</span>
+            Ask
+        </a>
+    </div>
+</body>
+</html>

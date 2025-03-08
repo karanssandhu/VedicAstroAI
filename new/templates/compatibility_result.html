@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2 class="card-title">Compatibility with {{ partner_name }}</h2>
+    
+    <div class="match-result">
+        <div class="match-percentage">{{ compatibility_data.percentage }}%</div>
+        <div class="match-label">Overall Compatibility</div>
+        <div class="match-score">{{ compatibility_data.overall_score }} out of {{ compatibility_data.max_score }} points</div>
+    </div>
+    
+    <div class="match-aspects">
+        {% for aspect in compatibility_data.aspects %}
+        <div class="aspect-item">
+            <div class="aspect-name">{{ aspect.name }}</div>
+            <div class="aspect-score">{{ aspect.score }}/{{ aspect.max }}</div>
+            <div class="aspect-bar">
+                <div class="aspect-fill" style="width: {{ (aspect.score / aspect.max * 100)|round }}%"></div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="match-recommendation">
+        {{ compatibility_data.recommendation }}
+    </div>
+    
+    <div class="element-comparison">
+        <div class="element-chart">
+            <div class="element-title">Your Elements</div>
+            
+            <div class="element-label">
+                <span>Fire</span>
+                <span>{{ compatibility_data.elements.you.fire }}%</span>
+            </div>
+            <div class="element-bar">
+                <div class="element-fill element-fire" style="width: {{ compatibility_data.elements.you.fire }}%"></div>
+            </div>
+            
+            <div class="element-label">
+                <span>Earth</span>
+                <span>{{ compatibility_data.elements.you.earth }}%</span>
+            </div>
+            <div class="element-bar">
+                <div class="element-fill element-earth" style="width: {{ compatibility_data.elements.you.earth }}%"></div>
+            </div>
+            
+            <div class="element-label">
+                <span>Air</span>
+                <span>{{ compatibility_data.elements.you.air }}%</span>
+            </div>
+            <div class="element-bar">
+                <div class="element-fill element-air" style="width: {{ compatibility_data.elements.you.air }}%"></div>
+            </div>
+            
+            <div class="element-label">
+                <span>Water</span>
+                <span>{{ compatibility_data.elements.you.water }}%</span>
+            </div>
+            <div class="element-bar">
+                <div class="element-fill element-water" style="width: {{ compatibility_data.elements.you.water }}%"></div>
+            </div>
+        </div>
+        
+        <div class="element-chart">
+            <div class="element-title">Partner's Elements</div>
+            
+            <div class="element-label">
+                <span>Fire</span>
+                <span>{{ compatibility_data.elements.partner.fire }}%</span>
+            </div>
+            <div class="element-bar">
+                <div class="element-fill element-fire" style="width: {{ compatibility_data.elements.partner.fire }}%"></div>
+            </div>
+            
+            <div class="element-label">
+                <span>Earth</span>
+                <span>{{ compatibility_data.elements.partner.earth }}%</span>
+            </div>
+            <div class="element-bar">
+                <div class="element-fill element-earth" style="width: {{ compatibility_data.elements.partner.earth }}%"></div>
+            </div>
+            
+            <div class="element-label">
+                <span>Air</span>
+                <span>{{ compatibility_data.elements.partner.air }}%</span>
+            </div>
+            <div class="element-bar">
+                <div class="element-fill element-air" style="width: {{ compatibility_data.elements.partner.air }}%"></div>
+            </div>
+            
+            <div class="element-label">
+                <span>Water</span>
+                <span>{{ compatibility_data.elements.partner.water }}%</span>
+            </div>
+            <div class="element-bar">
+                <div class="element-fill element-water" style="width: {{ compatibility_data.elements.partner.water }}%"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="form-group" style="margin-top: 20px;">
+    <a href="{{ url_for('compatibility') }}" class="btn btn-outline">Check Another Compatibility</a>
+</div>
+{% endblock %}
