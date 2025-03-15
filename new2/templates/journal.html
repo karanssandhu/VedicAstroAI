@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Astrological Journal{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="journal-header">
+        <h1>Astrological Journal</h1>
+        <p class="moon-info">Current Moon in {{ current_moon_sign }} {{ SIGN_SYMBOLS[current_moon_sign] }}</p>
+    </div>
+
+    <!-- New Entry Form -->
+    <div class="journal-form card">
+        <h3>New Entry</h3>
+        <form method="POST" action="{{ url_for('journal') }}">
+            <div class="form-group">
+                <label for="content">Write your thoughts</label>
+                <textarea 
+                    name="content" 
+                    id="content" 
+                    class="form-control" 
+                    rows="5" 
+                    required 
+                    placeholder="Share your reflections, dreams, and insights..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="mood">Current Mood</label>
+                <select name="mood" id="mood" class="form-control" required>
+                    <option value="">Select your mood...</option>
+                    <option value="Inspired">✨ Inspired</option>
+                    <option value="Peaceful">🌸 Peaceful</option>
+                    <option value="Happy">😊 Happy</option>
+                    <option value="Energetic">⚡ Energetic</option>
+                    <option value="Reflective">🤔 Reflective</option>
+                    <option value="Anxious">😰 Anxious</option>
+                    <option value="Tired">😴 Tired</option>
+                    <option value="Melancholic">🌧️ Melancholic</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Entry</button>
+        </form>
+    </div>
+
+    <!-- Journal Entries -->
+    <div class="journal-entries">
+        {% if entries %}
+            {% for entry in entries %}
+            <div class="entry card">
+                <div class="entry-header">
+                    <span class="entry-date">{{ entry.entry_date|format_date('%B %d, %Y at %I:%M %p') }}</span>
+                    <span class="moon-phase">Moon in {{ entry.moon_sign }} {{ SIGN_SYMBOLS[entry.moon_sign] }}</span>
+                </div>
+                <div class="entry-mood">Mood: {{ entry.mood }}</div>
+                <div class="entry-content">{{ entry.content|safe }}</div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-entries">
+                <p>No journal entries yet. Start writing about your astrological journey!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

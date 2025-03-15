@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}VedicAstroAI - Modern Vedic Astrology{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="cosmos-bg">
+        <div class="stars"></div>
+        <div class="twinkling"></div>
+    </div>
+    
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-container">
+                <div class="app-logo"></div>
+                <h1>VedicAstroAI</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="{{ url_for('home') }}" {% if request.endpoint == 'home' %}class="active"{% endif %}>Birth Chart</a></li>
+                    <li><a href="{{ url_for('transits') }}" {% if request.endpoint == 'transits' %}class="active"{% endif %}>Transits</a></li>
+                    <li><a href="{{ url_for('compatibility') }}" {% if request.endpoint == 'compatibility' %}class="active"{% endif %}>Compatibility</a></li>
+                    <li><a href="{{ url_for('daily_horoscope') }}" {% if request.endpoint == 'daily_horoscope' %}class="active"{% endif %}>Daily</a></li>
+                    {% if 'user_id' in session %}
+                        <li><a href="{{ url_for('chart') }}" {% if request.endpoint == 'chart' %}class="active"{% endif %}>Chart</a></li>
+                        <li><a href="{{ url_for('profile') }}" {% if request.endpoint == 'profile' %}class="active"{% endif %}>Profile</a></li>
+                        <li><a href="{{ url_for('journal') }}" {% if request.endpoint == 'journal' %}class="active"{% endif %}>Journal</a></li>
+                        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('login') }}" {% if request.endpoint == 'login' %}class="active"{% endif %}>Login</a></li>
+                        <li><a href="{{ url_for('register') }}" {% if request.endpoint == 'register' %}class="active"{% endif %}>Register</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </header>
+        
+        <main class="main-content">
+            {% if error %}
+            <div class="error-message">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span>{{ error }}</span>
+            </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </main>
+        
+        <footer class="app-footer">
+            <div class="footer-content">
+                <p>&copy; 2025 VedicAstroAI - Combining ancient wisdom with modern technology</p>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="https://github.com/karanssandhu/VedicAstroAI" target="_blank">GitHub</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    {% block scripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            {% block onload %}{% endblock %}
+        });
+    </script>
+    {% endblock %}
+</body>
+</html>

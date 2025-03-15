@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VedicAstroAI - Modern Vedic Astrology</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="cosmos-bg">
+        <div class="stars"></div>
+        <div class="twinkling"></div>
+    </div>
+    
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-container">
+                <div class="app-logo"></div>
+                <h1>VedicAstroAI</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="{{ url_for('home') }}" class="active">Birth Chart</a></li>
+                    <li><a href="{{ url_for('transits') }}">Transits</a></li>
+                    <li><a href="{{ url_for('compatibility') }}">Compatibility</a></li>
+                    <li><a href="{{ url_for('daily_horoscope') }}">Daily</a></li>
+                    {% if 'user_id' in session %}
+                    <li><a href="{{ url_for('chart') }}">Chart</a></li>
+                        <li><a href="{{ url_for('profile') }}">Profile</a></li>
+                        <li><a href="{{ url_for('journal') }}">Journal</a></li>
+                        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('login') }}">Login</a></li>
+                        <li><a href="{{ url_for('register') }}">Register</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </header>
+        
+        <main class="main-content">
+            <div class="hero-section">
+                <h2>Discover Your Cosmic Blueprint</h2>
+                <p>Unlock the ancient wisdom of Vedic astrology with modern AI interpretations</p>
+            </div>
+            
+            {% if error %}
+            <div class="error-message">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span>{{ error }}</span>
+            </div>
+            {% endif %}
+            
+            <div class="birth-chart-form">
+                <form action="{{ url_for('calculate_chart') }}" method="post" class="birth-form">
+                    <h3>Calculate Your Birth Chart</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" name="name" placeholder="Your name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="gender">Gender</label>
+                            <div class="gender-options">
+                                <label class="gender-option">
+                                    <input type="radio" name="gender" value="male">
+                                    <span>Male</span>
+                                </label>
+                                <label class="gender-option">
+                                    <input type="radio" name="gender" value="female">
+                                    <span>Female</span>
+                                </label>
+                                <label class="gender-option">
+                                    <input type="radio" name="gender" value="other">
+                                    <span>Other</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="date">Date of Birth</label>
+                            <input type="date" id="date" name="date" required>
+                            <small class="form-hint">The position of planets on this day shapes your core traits</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="time">Time of Birth</label>
+                            <input type="time" id="time" name="time" required>
+                            <small class="form-hint">Time determines your rising sign and house placements</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Birth Location</label>
+                        <input type="text" id="location" name="location" placeholder="City, Country" required>
+                        <small class="form-hint">Location affects planetary positions relative to the horizon</small>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">
+                        <span>Calculate Chart</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 5v14M19 12l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                </form>
+                
+                <div class="zodiac-wheel">
+                    <div class="wheel-circle"></div>
+                    {% for sign in SIGNS %}
+                        <div class="sign-marker" style="transform: rotate({{ loop.index0 * 30 }}deg) translateX(120px)">
+                            <span class="sign-symbol">{{ SIGN_SYMBOLS[sign] }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="features-section">
+                <h3>Explore Your Cosmic Journey</h3>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon planets-icon"></div>
+                        <h4>Detailed Birth Chart</h4>
+                        <p>Get comprehensive analysis of all planetary positions and their impact on your life</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon transits-icon"></div>
+                        <h4>Daily Transits</h4>
+                        <p>Stay updated on how current planetary movements affect your chart</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon compatibility-icon"></div>
+                        <h4>Relationship Compatibility</h4>
+                        <p>Understand your connections with friends, family, and partners</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon dashas-icon"></div>
+                        <h4>Dasha Periods</h4>
+                        <p>Navigate life's chapters through the lens of Vedic timing systems</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="app-footer">
+            <div class="footer-content">
+                <p>&copy; 2025 VedicAstroAI - Combining ancient wisdom with modern technology</p>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="https://github.com/karanssandhu/VedicAstroAI" target="_blank">GitHub</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').value = today;
+            
+            // Set default time to now
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('time').value = `${hours}:${minutes}`;
+            
+            // Add animation for zodiac wheel
+            const zodiacWheel = document.querySelector('.zodiac-wheel');
+            zodiacWheel.classList.add('animate-wheel');
+        });
+    </script>
+</body>
+</html>

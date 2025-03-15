@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Vedic Birth Chart | VedicAstroAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="cosmos-bg">
+        <div class="stars"></div>
+        <div class="twinkling"></div>
+    </div>
+
+    <div class="app-container chart-view">
+        <header class="app-header">
+            <div class="logo-container">
+                <div class="app-logo"></div>
+                <h1>VedicAstroAI</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="{{ url_for('home') }}" class="active">Birth Chart</a></li>
+                    <li><a href="{{ url_for('transits') }}">Transits</a></li>
+                    <li><a href="{{ url_for('compatibility') }}">Compatibility</a></li>
+                    <li><a href="{{ url_for('daily_horoscope') }}">Daily</a></li>
+                    {% if 'user_id' in session %}
+                    <li><a href="{{ url_for('chart') }}">Chart</a></li>
+                    <li><a href="{{ url_for('profile') }}">Profile</a></li>
+                    <li><a href="{{ url_for('journal') }}">Journal</a></li>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    {% else %}
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                    <li><a href="{{ url_for('register') }}">Register</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </header>
+
+        <main class="chart-container">
+            <div class="chart-header">
+                <div class="chart-title">
+                    <h2>
+                        {% if chart.user_name %}
+                        {{ chart.user_name }}'s Birth Chart
+                        {% else %}
+                        Birth Chart
+                        {% endif %}
+                    </h2>
+                    <p class="birth-details">{{ chart.birth_details }}</p>
+                </div>
+                <div class="chart-actions">
+                    {% if 'user_id' in session %}
+                    <button id="saveChart" class="btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                            <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                        Save Chart
+                    </button>
+                    {% endif %}
+                    <button id="printChart" class="btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                        Print
+                    </button>
+                </div>
+            </div>
+
+            <div class="chart-content">
+                <div class="chart-visualization">
+                    <div class="chart-wheel">
+                        <div class="wheel-center"></div>
+
+                        <!-- Houses -->
+                        {% for i in range(1, 13) %}
+                        <div class="house-sector" style="transform: rotate({{ ((i-1) * 30) - 90 }}deg)">
+                            <div class="house-line"></div>
+                            <div class="house-number">{{ i }}</div>
+                        </div>
+                        {% endfor %}
+
+                        <!-- Ascendant marker -->
+                        <div class="ascendant-marker" style="transform: rotate({{ chart.asc_degree }}deg)">
+                            <div class="asc-line"></div>
+                            <div class="asc-symbol">ASC</div>
+                        </div>
+
+                        <!-- Zodiac signs on outer wheel -->
+                        {% for sign in SIGNS %}
+                        <div class="sign-sector" style="transform: rotate({{ loop.index0 * 30 }}deg)">
+                            <div class="sign-symbol">{{ SIGN_SYMBOLS[sign] }}</div>
+                        </div>
+                        {% endfor %}
+
+                        <!-- Planets -->
+                        {% for planet in chart.planets %}
+                        {% set total_deg = (SIGNS.index(planet.sign) * 30) + planet.degree %}
+                        <div class="planet-marker" data-planet="{{ planet.name }}"
+                            style="transform: rotate({{ total_deg }}deg); --planet-color: {{ planet.color }};">
+                            <span class="planet-symbol">{{ PLANET_SYMBOLS[planet.name] }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="ascendant-card">
+                        <h3>Ascendant <span class="subtle">(Lagna)</span></h3>
+                        <div class="ascendant-details">
+                            <div class="ascendant-sign">
+                                <span class="sign-symbol">{{ SIGN_SYMBOLS[chart.ascendant] }}</span>
+                                <span class="sign-name">{{ chart.ascendant }}</span>
+                            </div>
+                            <div class="ascendant-degree">{{ "%0.2f"|format(chart.asc_degree) }}°</div>
+                        </div>
+                        <p class="element-modality">
+                            <span class="element {{ ELEMENT_MAP[chart.ascendant] }}">{{ ELEMENT_MAP[chart.ascendant]
+                                }}</span>
+                            <span class="modality {{ MODALITY_MAP[chart.ascendant] }}">{{ MODALITY_MAP[chart.ascendant]
+                                }}</span>
+                        </p>
+                        <div class="ascendant-info">
+                            <p>{{ chart.asc_reasoning }}</p>
+                            <button class="toggle-details">Learn more about {{ chart.ascendant }} Ascendant</button>
+                            <div class="hidden-details">
+                                <p>The Ascendant represents your outer personality, physical appearance, and how you
+                                    approach the world. It's the "mask" you wear in your interactions.</p>
+                                <p>With {{ chart.ascendant }} rising, you tend to come across as {{
+                                    ELEMENT_MAP[chart.ascendant] }} in temperament and {{ MODALITY_MAP[chart.ascendant]
+                                    }} in approach.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="planet-cards">
+                    <h3>Planetary Positions</h3>
+                    <div class="planet-grid">
+                        {% for planet in chart.planets %}
+                        <div class="planet-card" data-planet="{{ planet.name }}">
+                            <div class="planet-card-header"
+                                style="background: linear-gradient(to right, {{ planet.color }}, rgba(0,0,0,0.3));">
+                                <div class="planet-title">
+                                    <span class="planet-symbol">{{ PLANET_SYMBOLS[planet.name] }}</span>
+                                    <h4>{{ planet.name }}</h4>
+                                </div>
+                                <div class="planet-position">
+                                    <span class="sign-symbol">{{ SIGN_SYMBOLS[planet.sign] }}</span>
+                                    <span class="degree">{{ "%0.2f"|format(planet.degree) }}°</span>
+                                </div>
+                            </div>
+                            <div class="planet-card-body">
+                                <div class="planet-details">
+                                    <div class="detail">
+                                        <span class="detail-label">House:</span>
+                                        <span class="detail-value">{{ planet.house }}</span>
+                                    </div>
+                                    <div class="detail">
+                                        <span class="detail-label">Nakshatra:</span>
+                                        <span class="detail-value">{{ planet.nakshatra }}</span>
+                                    </div>
+                                    {% if planet.is_retrograde %}
+                                    <div class="retrograde-badge">Retrograde</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="planet-aspects">
+                                    {% if planet.aspects|length > 0 %}
+                                    <h5>Aspects</h5>
+                                    <ul class="aspect-list">
+                                        {% for aspect in planet.aspects %}
+                                        <li class="aspect {{ aspect.aspect_type }}">
+                                            <span class="aspect-symbol">{{ PLANET_SYMBOLS[aspect.planet] }}</span>
+                                            <span class="aspect-type">{{ aspect.aspect_type }}</span>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% endif %}
+                                </div>
+
+                                <div class="planet-interpretation">
+                                    <p>{{ planet.interpretation }}</p>
+                                    <button class="toggle-reasoning">Show reasoning</button>
+                                    <div class="reasoning hidden">{{ planet.reasoning }}</div>
+                                </div>
+
+                                <div class="planet-keywords">
+                                    {% for quality in planet.qualities %}
+                                    <span class="keyword">{{ quality }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="additional-info">
+                    <div class="info-section">
+                        <h3>Moon Phase & Lunar Day</h3>
+                        <div class="moon-info">
+                            <div class="moon-phase-visual">
+                                <!-- Moon phase visualization would go here -->
+                            </div>
+                            <div class="lunar-details">
+                                <p>Lunar Day (Tithi): <span>{{ chart.lunar_day }}</span></p>
+                                <p>Lunar Month: <span>{{ chart.lunar_month }}</span></p>
+                                <p>Lunar Year: <span>{{ chart.lunar_year }}</span></p>
+
+                                {% if chart.moon_void.is_void %}
+                                <div class="void-moon-alert">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                    </svg>
+                                    <span>Moon Void of Course</span>
+                                    <p>{{ chart.moon_void.description }}</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-section">
+                        <h3>Current Dasha Periods</h3>
+                        <div class="dasha-info">
+                            <div class="dasha-period">
+                                <h4>Mahadasha (Major Period)</h4>
+                                <p class="dasha-planet">{{ chart.dashas.mahadasha.planet }}</p>
+                                <p class="dasha-dates">{{ chart.dashas.mahadasha.start_date }} to {{
+                                    chart.dashas.mahadasha.end_date }}</p>
+                            </div>
+
+                            <div class="dasha-period">
+                                <h4>Antardasha (Sub-Period)</h4>
+                                <p class="dasha-planet">{{ chart.dashas.antardasha.planet }}</p>
+                                <p class="dasha-dates">{{ chart.dashas.antardasha.start_date }} to {{
+                                    chart.dashas.antardasha.end_date }}</p>
+                            </div>
+
+                            <a href="{{ url_for('dasha_periods') }}" class="btn-link">View Full Dasha Timeline</a>
+                        </div>
+                    </div>
+
+                    {% if chart.yogas|length > 0 %}
+                    <div class="info-section">
+                        <h3>Planetary Combinations (Yogas)</h3>
+                        <div class="yogas-list">
+                            {% for yoga in chart.yogas %}
+                            <div class="yoga-item">
+                                <h4>{{ yoga.name }}</h4>
+                                <p>{{ yoga.description }}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="cosmic-oracle">
+                    <h3>Ask the Cosmic Oracle</h3>
+                    <div class="oracle-container">
+                        <div class="oracle-messages" id="messages">
+                            <div class="oracle-message system">
+                                <p>Welcome to your cosmic guidance portal. Ask questions about your birth chart for
+                                    personalized insights.</p>
+                                <div class="suggested-questions">
+                                    <button class="question-btn">What does my Sun sign placement mean?</button>
+                                    <button class="question-btn">How does my Moon sign affect my emotions?</button>
+                                    <button class="question-btn">What career path suits my chart?</button>
+                                    <button class="question-btn">What are my relationship patterns?</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="oracle-input">
+                            <input type="text" id="question" placeholder="Ask a question about your chart...">
+                            <button id="sendQuestion" class="btn-primary">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <div class="footer-content">
+                <p>&copy; 2025 VedicAstroAI - Combining ancient wisdom with modern technology</p>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="https://github.com/karanssandhu/VedicAstroAI" target="_blank">GitHub</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Toggle reasoning visibility
+            document.querySelectorAll('.toggle-reasoning').forEach(button => {
+                button.addEventListener('click', function () {
+                    const reasoning = this.nextElementSibling;
+                    reasoning.classList.toggle('hidden');
+                    this.textContent = reasoning.classList.contains('hidden') ? 'Show reasoning' : 'Hide reasoning';
+                });
+            });
+
+            // Toggle ascendant details
+            document.querySelector('.toggle-details').addEventListener('click', function () {
+                const details = this.nextElementSibling;
+                details.classList.toggle('hidden');
+                this.textContent = details.classList.contains('hidden') ?
+                    `Learn more about ${document.querySelector('.ascendant-sign .sign-name').textContent} Ascendant` :
+                    'Hide details';
+            });
+
+            // Highlight planets on hover
+            document.querySelectorAll('.planet-card').forEach(card => {
+                card.addEventListener('mouseenter', function () {
+                    const planetName = this.getAttribute('data-planet');
+                    document.querySelector(`.planet-marker[data-planet="${planetName}"]`).classList.add('highlight');
+                });
+
+                card.addEventListener('mouseleave', function () {
+                    const planetName = this.getAttribute('data-planet');
+                    document.querySelector(`.planet-marker[data-planet="${planetName}"]`).classList.remove('highlight');
+                });
+            });
+
+            // Print chart functionality
+            document.getElementById('printChart').addEventListener('click', function () {
+                window.print();
+            });
+
+            // Save chart functionality
+            {% if 'user_id' in session %}
+            document.getElementById('saveChart').addEventListener('click', function () {
+                fetch('{{ url_for("save_chart") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.message);
+                        } else {
+                            alert('Error: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error saving chart. Please try again.');
+                    });
+            });
+            {% endif %}
+
+            // Oracle question handling
+            const messagesContainer = document.getElementById('messages');
+            const questionInput = document.getElementById('question');
+            const sendButton = document.getElementById('sendQuestion');
+
+            function sendQuestion() {
+                const question = questionInput.value.trim();
+
+                if (!question) return;
+
+                // Add user message
+                messagesContainer.innerHTML += `
+<div class="oracle-message user">
+<p>${question}</p>
+</div>
+<div class="oracle-message loading">
+<div class="loading-dots">
+<span></span><span></span><span></span>
+</div>
+</div>
+`;
+
+                // Scroll to bottom
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+                // Clear input
+                questionInput.value = '';
+
+                // Send query to backend
+                fetch('{{ url_for("handle_query") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        question: question
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Remove loading message
+                        const loadingMessage = document.querySelector('.oracle-message.loading');
+                        if (loadingMessage) loadingMessage.remove();
+
+                        // Add response
+                        messagesContainer.innerHTML += `
+<div class="oracle-message system">
+<p>${data.response}</p>
+<button class="toggle-reasoning">Show reasoning</button>
+<div class="reasoning hidden">${data.reasoning}</div>
+</div>
+`;
+
+                        // Add event listener to new toggle button
+                        const newToggle = messagesContainer.querySelector('.oracle-message.system:last-child .toggle-reasoning');
+                        newToggle.addEventListener('click', function () {
+                            const reasoning = this.nextElementSibling;
+                            reasoning.classList.toggle('hidden');
+                            this.textContent = reasoning.classList.contains('hidden') ? 'Show reasoning' : 'Hide reasoning';
+                        });
+
+                        // Scroll to bottom
+                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    })
+                    .catch(error => {
+                        // Remove loading message
+                        const loadingMessage = document.querySelector('.oracle-message.loading');
+                        if (loadingMessage) loadingMessage.remove();
+
+                        // Add error message
+                        messagesContainer.innerHTML += `
+<div class="oracle-message error">
+<p>Sorry, I couldn't process your question. Please try again.</p>
+</div>
+`;
+
+                        // Scroll to bottom
+                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                        console.error('Error:', error);
+                    });
+            }
+
+            // Send question on button click
+            sendButton.addEventListener('click', sendQuestion);
+
+            // Send question on Enter key
+            questionInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    sendQuestion();
+                }
+            });
+
+            // Suggested questions
+            document.querySelectorAll('.question-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    questionInput.value = this.textContent;
+                    sendQuestion();
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

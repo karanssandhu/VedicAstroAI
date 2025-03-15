@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Horoscope | VedicAstroAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="cosmos-bg">
+        <div class="stars"></div>
+        <div class="twinkling"></div>
+    </div>
+    
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-container">
+                <div class="app-logo"></div>
+                <h1>VedicAstroAI</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="{{ url_for('home') }}">Birth Chart</a></li>
+                    <li><a href="{{ url_for('transits') }}">Transits</a></li>
+                    <li><a href="{{ url_for('compatibility') }}">Compatibility</a></li>
+                    <li><a href="{{ url_for('daily_horoscope') }}" class="active">Daily</a></li>
+                    {% if 'user_id' in session %}
+                    <li><a href="{{ url_for('chart') }}">Chart</a></li>
+                        <li><a href="{{ url_for('profile') }}">Profile</a></li>
+                        <li><a href="{{ url_for('journal') }}">Journal</a></li>
+                        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('login') }}">Login</a></li>
+                        <li><a href="{{ url_for('register') }}">Register</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </header>
+        
+        <main class="daily-container">
+            <div class="page-header">
+                <h2>Your Daily Cosmic Guidance</h2>
+                <p class="timestamp">{{ current_date }}</p>
+            </div>
+            
+            <div class="daily-content">
+                <div class="daily-message-card">
+                    <div class="daily-header">
+                        <h3>Today's Personalized Forecast</h3>
+                        <div class="refresh-button" title="Refresh forecast">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M23 4v6h-6"></path>
+                                <path d="M1 20v-6h6"></path>
+                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="daily-body">
+                        <div class="daily-message">
+                            {{ daily_message | safe }}
+                        </div>
+                    </div>
+                    
+                    <div class="daily-footer">
+                        <div class="transit-badge moon">
+                            <span class="badge-symbol">{{ transits.transits|selectattr('planet', 'equalto', 'Moon')|first|attr('symbol') }}</span>
+                            <span class="badge-text">Moon in {{ transits.transits|selectattr('planet', 'equalto', 'Moon')|first|attr('sign') }}</span>
+                        </div>
+                        
+                        <div class="transit-badge sun">
+                            <span class="badge-symbol">{{ transits.transits|selectattr('planet', 'equalto', 'Sun')|first|attr('symbol') }}</span>
+                            <span class="badge-text">Sun in {{ transits.transits|selectattr('planet', 'equalto', 'Sun')|first|attr('sign') }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="daily-transits">
+                    <h3>Today's Cosmic Weather</h3>
+                    
+                    <div class="daily-planet-list">
+                        {% for planet in transits.transits|sort(attribute='significance', reverse=True) %}
+                            <div class="daily-planet-item">
+                                <div class="planet-icon" style="--color: {{ planet.color }}">
+                                    <span class="planet-symbol">{{ planet.symbol }}</span>
+                                </div>
+                                <div class="planet-info">
+                                    <div class="planet-name">{{ planet.planet }}</div>
+                                    <div class="planet-position">
+                                        <span class="sign-symbol">{{ planet.sign_symbol }}</span>
+                                        <span class="sign-name">{{ planet.sign }}</span>
+                                        <span class="degree">{{ "%0.2f"|format(planet.degree) }}°</span>
+                                    </div>
+                                </div>
+                                {% if planet.significance == "major" %}
+                                    <div class="significance major"></div>
+                                {% elif planet.significance == "moderate" %}
+                                    <div class="significance moderate"></div>
+                                {% else %}
+                                    <div class="significance minor"></div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="daily-areas">
+                    <h3>Areas of Focus Today</h3>
+                    
+                    <div class="areas-grid">
+                        {% set moon_transit = transits.transits|selectattr('planet', 'equalto', 'Moon')|first %}
+                        {% set moon_house = ((SIGNS.index(moon_transit.sign) - SIGNS.index(chart.ascendant) + 1) % 12) + 1 %}
+                        
+                        <div class="area-card">
+                            <h4>House of Focus</h4>
+                            <div class="area-content">
+                                <div class="house-number">{{ moon_house }}</div>
+                                <p class="house-meaning">{{ HOUSE_MEANINGS[moon_house] }}</p>
+                                <p class="area-tip">With the Moon transiting through your {{ moon_house }}th house today, this area of life gets a cosmic spotlight.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="area-card">
+                            <h4>Element of the Day</h4>
+                            <div class="area-content">
+                                <div class="element-symbol {{ moon_transit.element }}">
+                                    {% if moon_transit.element == "fire" %}
+                                        <svg viewBox="0 0 24 24" width="40" height="40"><path d="M12 23a7.5 7.5 0 0 1-5.138-12.963C8.204 8.774 11.5 6.5 11 1.5c0 0 9 4 6.5 14 1.518.665 3 2.358 3 4.5 0 2.485-2.018 4.5-4.5 4.5-.835 0-1.543-.231-2.214-.567-.834.344-1.738.567-2.786.567z" /></svg>
+                                    {% elif moon_transit.element == "earth" %}
+                                        <svg viewBox="0 0 24 24" width="40" height="40"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z" /></svg>
+                                    {% elif moon_transit.element == "air" %}
+                                        <svg viewBox="0 0 24 24" width="40" height="40"><path d="M14.5 17c-1.486 0-2.347-.823-3.086-1.534-.686-.659-1.334-1.283-2.415-1.456-.94.1-1.997.1-3 .1v-2c1.005 0 2.59 0 3.995-.166 1.798-.291 2.903 1.108 3.832 2.001.673.646 1.147.975 1.674.975V17zm2-7H13c-1.506 0-2.19-1.02-2.855-2.015C9.521 7.061 8.881 6 8 6 7.121 6 6 7.121 6 8c0 .877 1.121 2 2 2v2c-2.243 0-4-1.757-4-4s1.757-4 4-4c2.126 0 3.109 1.733 3.774 3.084C12.211 7.784 12.537 8 13 8h3.5v2zm3 5h-3v-2h3v2z" /></svg>
+                                    {% elif moon_transit.element == "water" %}
+                                        <svg viewBox="0 0 24 24" width="40" height="40"><path d="M12 24c3.32 0 6-2.69 6-6 0-1.5-1.5-5-6-12-4.5 7-6 10.5-6 12 0 3.31 2.69 6 6 6zm0-10c1.38 0 2.5 1.12 2.5 2.5S13.38 19 12 19s-2.5-1.12-2.5-2.5S10.62 14 12 14z" /></svg>
+                                    {% endif %}
+                                </div>
+                                <p class="element-name">{{ moon_transit.element|capitalize }}</p>
+                                <p class="area-tip">The Moon in {{ moon_transit.sign }} brings {{ moon_transit.element }} energy to your day. 
+                                    {% if moon_transit.element == "fire" %}
+                                        Focus on action, passion, and initiative.
+                                    {% elif moon_transit.element == "earth" %}
+                                        Prioritize stability, practicality, and tangible results.
+                                    {% elif moon_transit.element == "air" %}
+                                        Engage with ideas, communication, and social connections.
+                                    {% elif moon_transit.element == "water" %}
+                                        Connect with emotions, intuition, and deep feelings.
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="area-card">
+                            <h4>Approach of the Day</h4>
+                            <div class="area-content">
+                                <div class="modality-symbol {{ moon_transit.modality }}">
+                                    {% if moon_transit.modality == "cardinal" %}
+                                        <svg viewBox="0 0 24 24" width="40" height="40"><path d="M3.464 20.536L20.535 3.465m0 17.071L3.464 3.465" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+                                    {% elif moon_transit.modality == "fixed" %}
+                                        <svg viewBox="0 0 24 24" width="40" height="40"><rect x="4" y="4" width="16" height="16" rx="2" ry="2" stroke-width="2" fill="none"/></svg>
+                                    {% elif moon_transit.modality == "mutable" %}
+                                        <svg viewBox="0 0 24 24" width="40" height="40"><path d="M18 3v4l-4-4V3h4zM3 8h4l-4 4V8zm4 8H3v4h4l-4-4zm10 4v-4l4 4v-4h-4z" stroke-width="2" fill="none"/></svg>
+                                    {% endif %}
+                                </div>
+                                <p class="modality-name">{{ moon_transit.modality|capitalize }}</p>
+                                <p class="area-tip">
+                                    {% if moon_transit.modality == "cardinal" %}
+                                        Take initiative and start new projects today. Cardinal energy favors leadership and action.
+                                    {% elif moon_transit.modality == "fixed" %}
+                                        Focus on maintaining and strengthening what you already have. Fixed energy favors stability and determination.
+                                    {% elif moon_transit.modality == "mutable" %}
+                                        Stay flexible and adaptable to changing circumstances. Mutable energy favors versatility and adjustment.
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if 'user_id' in session %}
+                    <div class="daily-journal">
+                        <h3>Cosmic Journal</h3>
+                        <div class="journal-prompt">
+                            <p>Record your thoughts, feelings, and experiences under today's {{ moon_transit.sign }} Moon</p>
+                            <a href="{{ url_for('journal') }}" class="btn-primary">Write in Journal</a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </main>
+        
+        <footer class="app-footer">
+            <div class="footer-content">
+                <p>&copy; 2025 VedicAstroAI - Combining ancient wisdom with modern technology</p>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="https://github.com/karanssandhu/VedicAstroAI" target="_blank">GitHub</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-refresh page every 6 hours
+            setTimeout(() => {
+                window.location.reload();
+            }, 21600000); // 6 hours in milliseconds
+            
+            // Manual refresh button
+            document.querySelector('.refresh-button').addEventListener('click', function() {
+                window.location.reload();
+            });
+            
+            // Animate elements on load
+            document.querySelectorAll('.daily-planet-item, .area-card').forEach((el, index) => {
+                setTimeout(() => {
+                    el.classList.add('animate');
+                }, 100 * index);
+            });
+        });
+    </script>
+</body>
+</html>

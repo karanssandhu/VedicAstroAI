@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="content">
+    <h1 class="transit-date">{{ transit_data.date }}</h1>
+    <table class="transit-table">
+        <tr>
+            <th>Planet</th><th>Sign</th><th>Degrees</th><th>House</th><th>Aspect</th>
+        </tr>
+        {% for transit in transit_data.current_transits %}
+        <tr>
+            <td>{{ transit.planet }} {{ PLANET_SYMBOLS[transit.planet] }}</td>
+            <td>{{ transit.sign }}</td>
+            <td>{{ transit.degrees }}</td>
+            <td>{{ transit.house }}</td>
+            <td>{{ transit.aspect }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <p class="transit-interpretation">{{ transit_data.interpretation }}</p>
+</div>
+{% endblock %}

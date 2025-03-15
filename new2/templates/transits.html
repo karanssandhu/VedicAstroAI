@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Current Transits | VedicAstroAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="cosmos-bg">
+        <div class="stars"></div>
+        <div class="twinkling"></div>
+    </div>
+    
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-container">
+                <div class="app-logo"></div>
+                <h1>VedicAstroAI</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="{{ url_for('home') }}">Birth Chart</a></li>
+                    <li><a href="{{ url_for('transits') }}" class="active">Transits</a></li>
+                    <li><a href="{{ url_for('compatibility') }}">Compatibility</a></li>
+                    <li><a href="{{ url_for('daily_horoscope') }}">Daily</a></li>
+                    {% if 'user_id' in session %}
+                    <li><a href="{{ url_for('chart') }}">Chart</a></li>
+                        <li><a href="{{ url_for('profile') }}">Profile</a></li>
+                        <li><a href="{{ url_for('journal') }}">Journal</a></li>
+                        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('login') }}">Login</a></li>
+                        <li><a href="{{ url_for('register') }}">Register</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </header>
+        
+        <main class="transits-container">
+            <div class="page-header">
+                <h2>Current Planetary Transits</h2>
+                <p class="timestamp">As of {{ current_date }}</p>
+            </div>
+            
+            <div class="transit-overview">
+                <div class="forecast-card">
+                    <h3>Today's Cosmic Weather</h3>
+                    <p>{{ transits.daily_forecast }}</p>
+                </div>
+                
+                <div class="transit-visualization">
+                    <div class="transit-wheel">
+                        <!-- Similar to birth chart wheel but showing current transits -->
+                        <div class="wheel-center"></div>
+                        
+                        <!-- Zodiac signs on outer wheel -->
+                        {% for sign in SIGNS %}
+                            <div class="sign-sector" style="transform: rotate({{ loop.index0 * 30 }}deg)">
+                                <div class="sign-symbol">{{ SIGN_SYMBOLS[sign] }}</div>
+                            </div>
+                        {% endfor %}
+                        
+                        <!-- Transit planets -->
+                        {% for transit in transits.transits %}
+                            {% set total_deg = (SIGNS.index(transit.sign) * 30) + transit.degree %}
+                            <div class="planet-marker transit" data-planet="{{ transit.planet }}" 
+                                 style="transform: rotate({{ total_deg }}deg); --planet-color: {{ transit.color }};">
+                                <span class="planet-symbol">{{ transit.symbol }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="transit-details">
+                <h3>Current Planetary Positions</h3>
+                
+                <div class="transit-planets">
+                    {% for transit in transits.transits %}
+                        <div class="transit-card" data-significance="{{ transit.significance }}">
+                            <div class="transit-header" style="background-color: {{ transit.color }}20; border-color: {{ transit.color }};">
+                                <div class="transit-title">
+                                    <span class="planet-symbol">{{ transit.symbol }}</span>
+                                    <span class="planet-name">{{ transit.planet }}</span>
+                                </div>
+                                <div class="transit-position">
+                                    <span class="sign-symbol">{{ transit.sign_symbol }}</span>
+                                    <span>{{ transit.sign }} {{ "%0.2f"|format(transit.degree) }}°</span>
+                                </div>
+                                
+                                {% if transit.significance == "major" %}
+                                    <span class="significance-badge major">Major Influence</span>
+                                {% elif transit.significance == "moderate" %}
+                                    <span class="significance-badge moderate">Moderate</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="transit-body">
+                                <p>{{ transit.interpretation }}</p>
+                                
+                                {% if transit.aspects|length > 0 %}
+                                    <div class="transit-aspects">
+                                        <h4>Effects on Your Chart</h4>
+                                        <ul class="aspect-list">
+                                            {% for aspect in transit.aspects %}
+                                                <li class="aspect-effect {{ aspect.effect }}">
+                                                    <div class="aspect-title">
+                                                        <span class="aspect-symbol">{{ aspect.aspect_type }}</span>
+                                                        <span>to your {{ aspect.natal_planet }}</span>
+                                                    </div>
+                                                    <p>{{ aspect.description }}</p>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="transit-interpretation">
+                    <h3>Astrological Interpretation</h3>
+                    <div class="interpretation-content">
+                        {{ interpretation | safe }}
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="app-footer">
+            <div class="footer-content">
+                <p>&copy; 2025 VedicAstroAI - Combining ancient wisdom with modern technology</p>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="https://github.com/karanssandhu/VedicAstroAI" target="_blank">GitHub</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-refresh transits every hour
+            setTimeout(() => {
+                window.location.reload();
+            }, 3600000); // 1 hour in milliseconds
+            
+            // Filter transits by significance
+            const filterButtons = document.querySelectorAll('.significance-filter button');
+            const transitCards = document.querySelectorAll('.transit-card');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const filter = this.getAttribute('data-filter');
+                    
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    transitCards.forEach(card => {
+                        if (filter === 'all' || card.getAttribute('data-significance') === filter) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

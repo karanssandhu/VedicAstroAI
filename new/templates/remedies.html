@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="content">
+    <div class="remedy-section">
+        <h2 class="remedy-title">Challenging Planets</h2>
+        {% for planet in remedies_data.challenging_planets %}
+        <div class="planet-remedy">
+            <h3 class="planet-name">{{ planet.planet }}</h3>
+            <p class="planet-position">{{ planet.position }}</p>
+            <p class="planet-issues">{{ planet.issues }}</p>
+            <ul class="remedy-list">
+                {% for remedy in planet.remedies %}<li>{{ remedy }}</li>{% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="remedy-section">
+        <h2 class="remedy-title">Beneficial Planets</h2>
+        {% for planet in remedies_data.beneficial_planets %}
+        <div class="planet-remedy">
+            <h3 class="planet-name">{{ planet.planet }}</h3>
+            <p class="planet-position">{{ planet.position }}</p>
+            <p class="planet-benefits">{{ planet.benefits }}</p>
+            <ul class="enhancement-list">
+                {% for enhancement in planet.enhancement %}<li>{{ enhancement }}</li>{% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="remedy-section">
+        <h2 class="remedy-title">General Remedies</h2>
+        <ul class="general-remedies">
+            {% for remedy in remedies_data.general_remedies %}<li>{{ remedy }}</li>{% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

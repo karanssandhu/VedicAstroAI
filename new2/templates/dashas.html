@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dasha Periods | VedicAstroAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="cosmos-bg">
+        <div class="stars"></div>
+        <div class="twinkling"></div>
+    </div>
+
+    <div class="app-container chart-view">
+        <header class="app-header">
+            <div class="logo-container">
+                <div class="app-logo"></div>
+                <h1>VedicAstroAI</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="{{ url_for('home') }}">Birth Chart</a></li>
+                    <li><a href="{{ url_for('transits') }}">Transits</a></li>
+                    <li><a href="{{ url_for('compatibility') }}">Compatibility</a></li>
+                    <li><a href="{{ url_for('daily_horoscope') }}">Daily</a></li>
+                    {% if 'user_id' in session %}
+                    <li><a href="{{ url_for('chart') }}">Chart</a></li>
+                    <li><a href="{{ url_for('dasha_periods') }}" class="active">Dashas</a></li>
+                    <li><a href="{{ url_for('profile') }}">Profile</a></li>
+                    <li><a href="{{ url_for('journal') }}">Journal</a></li>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    {% else %}
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                    <li><a href="{{ url_for('register') }}">Register</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </header>
+
+        <main class="chart-container">
+            <div class="chart-header">
+                <div class="chart-title">
+                    <h2>Dasha Periods</h2>
+                    <p class="birth-details">{{ chart.birth_details }}</p>
+                </div>
+                <div class="chart-actions">
+                    <button id="printDashas" class="btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                        Print
+                    </button>
+                </div>
+            </div>
+
+            <div class="dasha-content">
+                <div class="dasha-explanation">
+                    <h3>Understanding Dasha Periods</h3>
+                    <p>In Vedic astrology, Vimshottari Dasha is a system that divides your life into planetary periods, each influencing different aspects of your life. Each planet rules for a specific duration, creating major periods (Mahadashas) and sub-periods (Antardashas).</p>
+                </div>
+
+                <div class="current-dashas">
+                    <h3>Your Current Dasha Periods</h3>
+                    <div class="dasha-grid">
+                        <div class="dasha-card mahadasha">
+                            <div class="dasha-card-header">
+                                <h4>
+                                    <span class="planet-symbol">{{ PLANET_SYMBOLS[chart.dashas.mahadasha.planet] }}</span>
+                                    {{ chart.dashas.mahadasha.planet }} Mahadasha
+                                </h4>
+                            </div>
+                            <div class="dasha-card-body">
+                                <div class="dasha-period-dates">
+                                    <div class="start-date">
+                                        <span class="date-label">Start:</span>
+                                        <span class="date-value">{{ chart.dashas.mahadasha.start_date }}</span>
+                                    </div>
+                                    <div class="end-date">
+                                        <span class="date-label">End:</span>
+                                        <span class="date-value">{{ chart.dashas.mahadasha.end_date }}</span>
+                                    </div>
+                                </div>
+                                <div class="dasha-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="mahadasha-progress"></div>
+                                    </div>
+                                    <span class="progress-text" id="mahadasha-percent"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dasha-card antardasha">
+                            <div class="dasha-card-header">
+                                <h4>
+                                    <span class="planet-symbol">{{ PLANET_SYMBOLS[chart.dashas.antardasha.planet] }}</span>
+                                    {{ chart.dashas.antardasha.planet }} Antardasha
+                                </h4>
+                            </div>
+                            <div class="dasha-card-body">
+                                <div class="dasha-period-dates">
+                                    <div class="start-date">
+                                        <span class="date-label">Start:</span>
+                                        <span class="date-value">{{ chart.dashas.antardasha.start_date }}</span>
+                                    </div>
+                                    <div class="end-date">
+                                        <span class="date-label">End:</span>
+                                        <span class="date-value">{{ chart.dashas.antardasha.end_date }}</span>
+                                    </div>
+                                </div>
+                                <div class="dasha-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="antardasha-progress"></div>
+                                    </div>
+                                    <span class="progress-text" id="antardasha-percent"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dasha-interpretation">
+                    <h3>Your Dasha Interpretation</h3>
+                    <div class="interpretation-content">
+                        {{ dasha_interpretation|safe }}
+                    </div>
+                </div>
+
+                <div class="dasha-timeline">
+                    <h3>Full Dasha Timeline</h3>
+                    <div class="timeline-container">
+                        <div class="timeline-periods">
+                            <!-- The timeline will be populated by JavaScript -->
+                            <div id="dasha-timeline-content">
+                                <p class="loading-text">Loading your dasha timeline...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="planetary-qualities">
+                    <h3>Planetary Influences in Dashas</h3>
+                    <div class="planet-qualities-grid">
+                        <div class="planet-quality-card">
+                            <h4>
+                                <span class="planet-symbol">{{ PLANET_SYMBOLS['Sun'] }}</span>
+                                Sun
+                            </h4>
+                            <p>Vitality, ego, father, authority, leadership, government positions.</p>
+                        </div>
+                        <div class="planet-quality-card">
+                            <h4>
+                                <span class="planet-symbol">{{ PLANET_SYMBOLS['Moon'] }}</span>
+                                Moon
+                            </h4>
+                            <p>Emotions, mother, home, intuition, nurturing, public, popularity.</p>
+                        </div>
+                        <div class="planet-quality-card">
+                            <h4>
+                                <span class="planet-symbol">{{ PLANET_SYMBOLS['Mars'] }}</span>
+                                Mars
+                            </h4>
+                            <p>Action, courage, energy, brothers, real estate, competition, sports.</p>
+                        </div>
+                        <div class="planet-quality-card">
+                            <h4>
+                                <span class="planet-symbol">{{ PLANET_SYMBOLS['Mercury'] }}</span>
+                                Mercury
+                            </h4>
+                            <p>Communication, intelligence, education, business, trade, writing.</p>
+                        </div>
+                        <div class="planet-quality-card">
+                            <h4>
+                                <span class="planet-symbol">{{ PLANET_SYMBOLS['Jupiter'] }}</span>
+                                Jupiter
+                            </h4>
+                            <p>Wisdom, prosperity, spirituality, children, teachers, expansion.</p>
+                        </div>
+                        <div class="planet-quality-card">
+                            <h4>
+                                <span class="planet-symbol">{{ PLANET_SYMBOLS['Venus'] }}</span>
+                                Venus
+                            </h4>
+                            <p>Relationships, beauty, arts, marriage, luxury, pleasure, comfort.</p>
+                        </div>
+                        <div class="planet-quality-card">
+                            <h4>
+                                <span class="planet-symbol">{{ PLANET_SYMBOLS['Saturn'] }}</span>
+                                Saturn
+                            </h4>
+                            <p>Discipline, career, longevity, obstacles, delays, maturity, hard work.</p>
+                        </div>
+                        <div class="planet-quality-card">
+                            <h4>
+                                <span class="planet-symbol">{{ PLANET_SYMBOLS['Rahu'] }}</span>
+                                Rahu
+                            </h4>
+                            <p>Ambition, innovation, unconventional paths, obsessions, foreigners.</p>
+                        </div>
+                        <div class="planet-quality-card">
+                            <h4>
+                                <span class="planet-symbol">{{ PLANET_SYMBOLS['Ketu'] }}</span>
+                                Ketu
+                            </h4>
+                            <p>Spirituality, liberation, detachment, past life connections, moksha.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cosmic-oracle">
+                    <h3>Ask About Your Dasha Periods</h3>
+                    <div class="oracle-container">
+                        <div class="oracle-messages" id="messages">
+                            <div class="oracle-message system">
+                                <p>Ask questions about your current dasha periods and how they might affect your life journey.</p>
+                                <div class="suggested-questions">
+                                    <button class="question-btn">How will my current Mahadasha affect me?</button>
+                                    <button class="question-btn">When will my next major life transition be?</button>
+                                    <button class="question-btn">What opportunities should I look for in this period?</button>
+                                    <button class="question-btn">How can I best navigate challenges in this dasha?</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="oracle-input">
+                            <input type="text" id="question" placeholder="Ask a question about your dashas...">
+                            <button id="sendQuestion" class="btn-primary">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <div class="footer-content">
+                <p>&copy; 2025 VedicAstroAI - Combining ancient wisdom with modern technology</p>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="https://github.com/karanssandhu/VedicAstroAI" target="_blank">GitHub</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Calculate progress percentages for dasha periods
+            function calculateProgress(startDate, endDate) {
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                const now = new Date();
+                
+                if (now < start) return 0;
+                if (now > end) return 100;
+                
+                const totalDuration = end - start;
+                const elapsed = now - start;
+                return Math.floor((elapsed / totalDuration) * 100);
+            }
+            
+            // Parse dates from the chart data
+            const mahaDashaStart = "{{ chart.dashas.mahadasha.start_date }}";
+            const mahaDashaEnd = "{{ chart.dashas.mahadasha.end_date }}";
+            const antarDashaStart = "{{ chart.dashas.antardasha.start_date }}";
+            const antarDashaEnd = "{{ chart.dashas.antardasha.end_date }}";
+            
+            // Calculate and display progress
+            const mahaDashaProgress = calculateProgress(mahaDashaStart, mahaDashaEnd);
+            const antarDashaProgress = calculateProgress(antarDashaStart, antarDashaEnd);
+            
+            document.getElementById('mahadasha-progress').style.width = mahaDashaProgress + '%';
+            document.getElementById('antardasha-progress').style.width = antarDashaProgress + '%';
+            document.getElementById('mahadasha-percent').textContent = mahaDashaProgress + '% complete';
+            document.getElementById('antardasha-percent').textContent = antarDashaProgress + '% complete';
+            
+            // Simulate loading the timeline
+            setTimeout(function() {
+                const timelineContainer = document.getElementById('dasha-timeline-content');
+                let timelineHTML = '<div class="timeline-ruler"></div>';
+                
+                // Example of how we might render a timeline - this would be replaced with actual data
+                const planets = ['Saturn', 'Mercury', 'Ketu', 'Venus', 'Sun', 'Moon', 'Mars', 'Rahu', 'Jupiter'];
+                const currentYear = new Date().getFullYear();
+                let currentDate = new Date(currentYear - 6, 0, 1);
+                
+                planets.forEach((planet, index) => {
+                    const duration = [8, 17, 7, 20, 6, 10, 7, 18, 16][index];
+                    const startDate = new Date(currentDate);
+                    currentDate.setFullYear(currentDate.getFullYear() + duration);
+                    const endDate = new Date(currentDate);
+                    
+                    const isActive = mahaDashaStart.includes(planet);
+                    const width = (duration / 120) * 100; // Scaled to make it fit
+
+                    timelineHTML += `
+                        <div class="timeline-period ${isActive ? 'active' : ''}" style="width: ${width}%">
+                            <div class="period-label">
+                                <span class="planet-symbol">${PLANET_SYMBOLS[planet]}</span>
+                                <span class="planet-name">${planet}</span>
+                            </div>
+                            <div class="period-dates">
+                                <span>${startDate.getFullYear()}</span>
+                                <span>${endDate.getFullYear()}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                timelineContainer.innerHTML = timelineHTML;
+            }, 1000);
+
+            // Print functionality
+            document.getElementById('printDashas').addEventListener('click', function() {
+                window.print();
+            });
+
+            // Oracle question handling
+            const messagesContainer = document.getElementById('messages');
+            const questionInput = document.getElementById('question');
+            const sendButton = document.getElementById('sendQuestion');
+
+            function sendQuestion() {
+                const question = questionInput.value.trim();
+
+                if (!question) return;
+
+                // Add user message
+                messagesContainer.innerHTML += `
+                    <div class="oracle-message user">
+                        <p>${question}</p>
+                    </div>
+                    <div class="oracle-message loading">
+                        <div class="loading-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                `;
+
+                // Scroll to bottom
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+                // Clear input
+                questionInput.value = '';
+
+                // Send query to backend
+                fetch('{{ url_for("handle_query") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        question: question
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Remove loading message
+                    const loadingMessage = document.querySelector('.oracle-message.loading');
+                    if (loadingMessage) loadingMessage.remove();
+
+                    // Add response
+                    messagesContainer.innerHTML += `
+                        <div class="oracle-message system">
+                            <p>${data.response}</p>
+                            <button class="toggle-reasoning">Show reasoning</button>
+                            <div class="reasoning hidden">${data.reasoning}</div>
+                        </div>
+                    `;
+
+                    // Add event listener to new toggle button
+                    const newToggle = messagesContainer.querySelector('.oracle-message.system:last-child .toggle-reasoning');
+                    newToggle.addEventListener('click', function() {
+                        const reasoning = this.nextElementSibling;
+                        reasoning.classList.toggle('hidden');
+                        this.textContent = reasoning.classList.contains('hidden') ? 'Show reasoning' : 'Hide reasoning';
+                    });
+
+                    // Scroll to bottom
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                })
+                .catch(error => {
+                    // Remove loading message
+                    const loadingMessage = document.querySelector('.oracle-message.loading');
+                    if (loadingMessage) loadingMessage.remove();
+
+                    // Add error message
+                    messagesContainer.innerHTML += `
+                        <div class="oracle-message error">
+                            <p>Sorry, I couldn't process your question. Please try again.</p>
+                        </div>
+                    `;
+
+                    // Scroll to bottom
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    console.error('Error:', error);
+                });
+            }
+
+            // Send question on button click
+            sendButton.addEventListener('click', sendQuestion);
+
+            // Send question on Enter key
+            questionInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendQuestion();
+                }
+            });
+
+            // Suggested questions
+            document.querySelectorAll('.question-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    questionInput.value = this.textContent;
+                    sendQuestion();
+                });
+            });
+        });
+
+        // Define PLANET_SYMBOLS for JavaScript
+        const PLANET_SYMBOLS = {
+            'Sun': '☉',
+            'Moon': '☽',
+            'Mars': '♂',
+            'Mercury': '☿',
+            'Jupiter': '♃',
+            'Venus': '♀',
+            'Saturn': '♄',
+            'Rahu': '☊',
+            'Ketu': '☋'
+        };
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compatibility Results | VedicAstroAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="cosmos-bg">
+        <div class="stars"></div>
+        <div class="twinkling"></div>
+    </div>
+    
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-container">
+                <div class="app-logo"></div>
+                <h1>VedicAstroAI</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="{{ url_for('home') }}">Birth Chart</a></li>
+                    <li><a href="{{ url_for('transits') }}">Transits</a></li>
+                    <li><a href="{{ url_for('compatibility') }}" class="active">Compatibility</a></li>
+                    <li><a href="{{ url_for('daily_horoscope') }}">Daily</a></li>
+                    {% if 'user_id' in session %}
+                    <li><a href="{{ url_for('chart') }}">Chart</a></li>
+                        <li><a href="{{ url_for('profile') }}">Profile</a></li>
+                        <li><a href="{{ url_for('journal') }}">Journal</a></li>
+                        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('login') }}">Login</a></li>
+                        <li><a href="{{ url_for('register') }}">Register</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </header>
+        
+        <main class="compatibility-results">
+            <div class="page-header">
+                <h2>Compatibility Analysis</h2>
+                <p class="subtitle">
+                    {% if user_chart.user_name %}
+                        {{ user_chart.user_name }}
+                    {% else %}
+                        You
+                    {% endif %} 
+                    & {{ friend_name }}
+                </p>
+            </div>
+            
+            <div class="compatibility-overview">
+                <div class="compatibility-score">
+                    <div class="score-display" style="--score: {{ compatibility.overall_score }}">
+                        <div class="score-circle">
+                            <div class="score-value">{{ compatibility.overall_score }}%</div>
+                            <div class="score-label">Overall Compatibility</div>
+                        </div>
+                    </div>
+                    
+                    <div class="compatibility-summary">
+                        <div class="potential-indicator">
+                            <h3>Relationship Potential</h3>
+                            <div class="potential-label {{ compatibility.longevity_potential.lower().replace(' ', '-') }}">
+                                {{ compatibility.longevity_potential }}
+                            </div>
+                        </div>
+                        
+                        <div class="detail-scores">
+                            <div class="score-bar">
+                                <div class="score-label">Emotional</div>
+                                <div class="bar-container">
+                                    <div class="bar-fill" style="width: {{ compatibility.emotional_compatibility }}%"></div>
+                                </div>
+                                <div class="score-percent">{{ compatibility.emotional_compatibility }}%</div>
+                            </div>
+                            
+                            <div class="score-bar">
+                                <div class="score-label">Communication</div>
+                                <div class="bar-container">
+                                    <div class="bar-fill" style="width: {{ compatibility.communication_compatibility }}%"></div>
+                                </div>
+                                <div class="score-percent">{{ compatibility.communication_compatibility }}%</div>
+                            </div>
+                            
+                            <div class="score-bar">
+                                <div class="score-label">Physical</div>
+                                <div class="bar-container">
+                                    <div class="bar-fill" style="width: {{ compatibility.physical_compatibility }}%"></div>
+                                </div>
+                                <div class="score-percent">{{ compatibility.physical_compatibility }}%</div>
+                            </div>
+                            
+                            <div class="score-bar">
+                                <div class="score-label">Spiritual</div>
+                                <div class="bar-container">
+                                    <div class="bar-fill" style="width: {{ compatibility.spiritual_compatibility }}%"></div>
+                                </div>
+                                <div class="score-percent">{{ compatibility.spiritual_compatibility }}%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="charts-comparison">
+                    <div class="chart-comparison-container">
+                        <div class="mini-chart user">
+                            <h3>
+                                {% if user_chart.user_name %}
+                                    {{ user_chart.user_name }}
+                                {% else %}
+                                    Your Chart
+                                {% endif %}
+                            </h3>
+                            <div class="mini-chart-visual">
+                                <!-- Mini chart visualization -->
+                                <div class="chart-wheel mini">
+                                    <!-- Ascendant Sign -->
+                                    <div class="ascendant-marker" style="--angle: 0deg">
+                                        {{ SIGN_SYMBOLS[user_chart.ascendant] }}
+                                    </div>
+                                    
+                                    <!-- Core planets -->
+                                    {% for planet in ['Sun', 'Moon', 'Venus', 'Mars', 'Mercury'] %}
+                                        {% set planet_data = user_chart.planets|selectattr('name', 'equalto', planet)|first %}
+                                        {% if planet_data %}
+                                            <div class="planet-marker mini" style="--angle: {{ (SIGNS.index(planet_data.sign) * 30) + planet_data.degree }}deg; --color: {{ planet_data.color }}">
+                                                {{ PLANET_SYMBOLS[planet] }}
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="mini-chart-details">
+                                <p>
+                                    <span class="label">Sun:</span>
+                                    <span class="value">{{ SIGN_SYMBOLS[user_chart.planets|selectattr('name', 'equalto', 'Sun')|first|attr('sign')] }} {{ user_chart.planets|selectattr('name', 'equalto', 'Sun')|first|attr('sign') }}</span>
+                                </p>
+                                <p>
+                                    <span class="label">Moon:</span>
+                                    <span class="value">{{ SIGN_SYMBOLS[user_chart.planets|selectattr('name', 'equalto', 'Moon')|first|attr('sign')] }} {{ user_chart.planets|selectattr('name', 'equalto', 'Moon')|first|attr('sign') }}</span>
+                                </p>
+                                <p>
+                                    <span class="label">Rising:</span>
+                                    <span class="value">{{ SIGN_SYMBOLS[user_chart.ascendant] }} {{ user_chart.ascendant }}</span>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="comparison-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                        </div>
+                        
+                        <div class="mini-chart friend">
+                            <h3>{{ friend_name }}'s Chart</h3>
+                            <div class="mini-chart-visual">
+                                <!-- Mini chart visualization -->
+                                <div class="chart-wheel mini">
+                                    <!-- Ascendant Sign -->
+                                    <div class="ascendant-marker" style="--angle: 0deg">
+                                        {{ SIGN_SYMBOLS[friend_chart.ascendant] }}
+                                    </div>
+                                    
+                                    <!-- Core planets -->
+                                    {% for planet in ['Sun', 'Moon', 'Venus', 'Mars', 'Mercury'] %}
+                                        {% set planet_data = friend_chart.planets|selectattr('name', 'equalto', planet)|first %}
+                                        {% if planet_data %}
+                                            <div class="planet-marker mini" style="--angle: {{ (SIGNS.index(planet_data.sign) * 30) + planet_data.degree }}deg; --color: {{ planet_data.color }}">
+                                                {{ PLANET_SYMBOLS[planet] }}
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="mini-chart-details">
+                                <p>
+                                    <span class="label">Sun:</span>
+                                    <span class="value">{{ SIGN_SYMBOLS[friend_chart.planets|selectattr('name', 'equalto', 'Sun')|first|attr('sign')] }} {{ friend_chart.planets|selectattr('name', 'equalto', 'Sun')|first|attr('sign') }}</span>
+                                </p>
+                                <p>
+                                    <span class="label">Moon:</span>
+                                    <span class="value">{{ SIGN_SYMBOLS[friend_chart.planets|selectattr('name', 'equalto', 'Moon')|first|attr('sign')] }} {{ friend_chart.planets|selectattr('name', 'equalto', 'Moon')|first|attr('sign') }}</span>
+                                </p>
+                                <p>
+                                    <span class="label">Rising:</span>
+                                    <span class="value">{{ SIGN_SYMBOLS[friend_chart.ascendant] }} {{ friend_chart.ascendant }}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="relationship-areas">
+                <h3>Key Relationship Areas</h3>
+                
+                <div class="areas-grid">
+                    {% for area in compatibility.areas %}
+                        <div class="area-card {{ 'positive' if area.score >= 70 else 'neutral' if area.score >= 50 else 'challenging' }}">
+                            <h4>{{ area.title }}</h4>
+                            <div class="area-score">{{ area.score }}%</div>
+                            <p>{{ area.description }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="compatibility-interpretation">
+                <h3>Astrological Interpretation</h3>
+                <div class="interpretation-content">
+                    {{ interpretation | safe }}
+                </div>
+            </div>
+            
+            <div class="compatibility-action">
+                <a href="{{ url_for('compatibility') }}" class="btn-secondary">Try Another Compatibility</a>
+                
+                {% if 'user_id' in session %}
+                    <div class="action-note">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        <span>This chart has been saved to your profile</span>
+                    </div>
+                {% endif %}
+            </div>
+        </main>
+        
+        <footer class="app-footer">
+            <div class="footer-content">
+                <p>&copy; 2025 VedicAstroAI - Combining ancient wisdom with modern technology</p>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="https://github.com/karanssandhu/VedicAstroAI" target="_blank">GitHub</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animation for score display
+            const scoreCircle = document.querySelector('.score-circle');
+            setTimeout(() => {
+                scoreCircle.classList.add('animate');
+            }, 300);
+            
+            // Animation for bar graphs
+            const bars = document.querySelectorAll('.bar-fill');
+            setTimeout(() => {
+                bars.forEach(bar => {
+                    bar.classList.add('animate');
+                });
+            }, 600);
+        });
+    </script>
+</body>
+</html>

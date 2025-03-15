@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - Vedic Astro AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Vedic Astro AI</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('home') }}">Home</a></li>
+                <li><a href="{{ url_for('chart') }}">Chart</a></li>
+                <li><a href="{{ url_for('daily_horoscope') }}">Daily Horoscope</a></li>
+                <li><a href="{{ url_for('transits') }}">Transits</a></li>
+                <li><a href="{{ url_for('compatibility') }}">Compatibility</a></li>
+                <li class="active"><a href="{{ url_for('profile') }}">My Profile</a></li>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="profile-container">
+            <h2>My Profile</h2>
+            {% if current_user.is_authenticated %}
+                <div class="user-info">
+                    <h3>Account Information</h3>
+                    <p><strong>Username:</strong> {{ current_user.username }}</p>
+                    <p><strong>Email:</strong> {{ current_user.email }}</p>
+                </div>
+
+                <div class="birth-details">
+                    <h3>Birth Details</h3>
+                    {% if current_user.birth_date %}
+                        <p><strong>Date of Birth:</strong> {{ current_user.birth_date.strftime('%B %d, %Y') }}</p>
+                        <p><strong>Time of Birth:</strong> {{ current_user.birth_time.strftime('%H:%M') }}</p>
+                        <p><strong>Place of Birth:</strong> {{ current_user.birth_place }}</p>
+                        <p><strong>Latitude:</strong> {{ current_user.latitude }}</p>
+                        <p><strong>Longitude:</strong> {{ current_user.longitude }}</p>
+                    {% else %}
+                        <p>No birth details provided.</p>
+                        <a href="#" class="btn" id="add-birth-details">Add Birth Details</a>
+
+                        <form id="birth-details-form" class="hidden">
+                            <div class="form-group">
+                                <label for="birth_date">Date of Birth:</label>
+                                <input type="date" id="birth_date" name="birth_date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="birth_time">Time of Birth:</label>
+                                <input type="time" id="birth_time" name="birth_time" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="birth_place">Place of Birth:</label>
+                                <input type="text" id="birth_place" name="birth_place" required>
+                            </div>
+                            <button type="submit" class="btn">Save Details</button>
+                        </form>
+                    {% endif %}
+                </div>
+
+                <div class="saved-charts">
+                    <h3>Saved Charts</h3>
+                    {% if charts %}
+                        <ul class="charts-list">
+                            {% for chart in charts %}
+                                <li>
+                                    <a href="{{ url_for('chart', chart_id=chart.id) }}">{{ chart.name }}</a>
+                                    <span class="chart-date">{{ chart.created_at.strftime('%Y-%m-%d') }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No saved charts yet.</p>
+                    {% endif %}
+                </div>
+            {% else %}
+                <p>Please <a href="{{ url_for('login') }}">login</a> to view your profile.</p>
+            {% endif %}
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Vedic Astro AI. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const addDetailsBtn = document.getElementById('add-birth-details');
+            const detailsForm = document.getElementById('birth-details-form');
+            
+            if (addDetailsBtn) {
+                addDetailsBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    detailsForm.classList.toggle('hidden');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
